@@ -245,9 +245,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
         </tr>
         <tr><td><div class="inst-name">1st installment (10%)</div><div class="inst-due">Due: <span id="due1lbl">Month 1</span> · <b id="due1">—</b></div></td><td><div class="sl-wrap"><input type="range" id="sl1" min="0" max="1" value="1" step="1" oninput="onSlide(1)"></div></td><td><div class="mo-lbl due" id="mv1">—</div></td></tr>
         <tr><td><div class="inst-name">2nd installment (20%)</div><div class="inst-due">Due: <span id="due2lbl">Month 6</span> · <b id="due2">—</b></div></td><td><div class="sl-wrap"><input type="range" id="sl2" min="1" max="6" value="6" step="1" oninput="onSlide(2)"></div></td><td><div class="mo-lbl due" id="mv2">—</div></td></tr>
-        <tr><td><div class="inst-name">3rd installment (20%)</div><div class="inst-due">Due: <span id="due3lbl">Month 10</span> · <b id="due3">—</b></div></td><td><div class="sl-wrap"><input type="range" id="sl3" min="6" max="10" value="10" step="1" oninput="onSlide(3)"></div></td><td><div class="mo-lbl due" id="mv3">—</div></td></tr>
-        <tr><td><div class="inst-name">4th installment (20%)</div><div class="inst-due">Due: <span id="due4lbl">Month 14</span> · <b id="due4">—</b></div></td><td><div class="sl-wrap"><input type="range" id="sl4" min="10" max="14" value="14" step="1" oninput="onSlide(4)"></div></td><td><div class="mo-lbl due" id="mv4">—</div></td></tr>
-        <tr id="row5"><td><div class="inst-name">Handover payment (20%)</div><div class="inst-due" id="hodue">Pay any time before handover · <b id="due5">—</b> · earns ROI from payment date</div></td><td><div class="sl-wrap"><input type="range" id="sl5" min="14" max="37" value="37" step="1" oninput="onSlide(5)"></div></td><td><div class="mo-lbl due" id="mv5">—</div></td></tr>
+        <tr><td><div class="inst-name">3rd installment (20%)</div><div class="inst-due">Due: <span id="due3lbl">Month 12</span> · <b id="due3">—</b></div></td><td><div class="sl-wrap"><input type="range" id="sl3" min="6" max="12" value="12" step="1" oninput="onSlide(3)"></div></td><td><div class="mo-lbl due" id="mv3">—</div></td></tr>
+        <tr id="row5"><td><div class="inst-name">Handover payment (40%)</div><div class="inst-due" id="hodue">Pay any time before handover · <b id="due5">—</b> · earns ROI from payment date</div></td><td><div class="sl-wrap"><input type="range" id="sl5" min="10" max="37" value="37" step="1" oninput="onSlide(5)"></div></td><td><div class="mo-lbl due" id="mv5">—</div></td></tr>
       </tbody>
     </table>
   </div>
@@ -339,7 +338,6 @@ var PROJECTS = {
     hoFixed:      new Date(2027,8,1),
     hoDisplay:    'Aug 2027',
     hoDisplayFull:'30 Aug 2027',
-    dues: [1, 4, 8, 12],
     units: [
       {label:'Studio with Pool',    price:1152000},
       {label:'1 BHK with Pool',     price:1377000},
@@ -362,8 +360,8 @@ function getHO_DISPLAY_FULL(){return getProjectData().hoDisplayFull||getProjectD
 function getInstDues(){
   var proj=getProjectData();
   var hoMo=getHOMonth();
-  var base=proj.dues||[1,6,10,14];
-  return [base[0],base[1],base[2],base[3],hoMo];
+  var base=proj.dues||[1,6,12];
+  return [base[0],base[1],base[2],hoMo];
 }
 
 function onProjectChange(){
@@ -379,19 +377,20 @@ function onProjectChange(){
   document.getElementById('hoDisplay').textContent=proj.hoDisplayFull||proj.hoDisplay;
   // Update due labels in slider table
   var dues=getInstDues();
-  var lblIds=['due1lbl','due2lbl','due3lbl','due4lbl'];
-  dues.slice(0,4).forEach(function(d,i){
+  var lblIds=['due1lbl','due2lbl','due3lbl'];
+  dues.slice(0,3).forEach(function(d,i){
     var el=document.getElementById(lblIds[i]);
     if(el)el.textContent='Month '+d;
   });
   // Reset sliders to due dates for this project
-  var prevDues=[0].concat(dues.slice(0,4));
-  for(var i=1;i<=4;i++){
+  var prevDues=[0].concat(dues.slice(0,3));
+  for(var i=1;i<=3;i++){
     var sl=document.getElementById('sl'+i);
     if(sl){sl.min=prevDues[i-1];sl.max=dues[i-1];sl.value=dues[i-1];}
   }
   var sl5=document.getElementById('sl5');
-  if(sl5){sl5.min=dues[3];sl5.max=dues[4];sl5.value=dues[4];}
+  var hoMo=getHOMonth();
+  if(sl5){sl5.min=dues[2];sl5.max=hoMo;sl5.value=hoMo;}
   onUnitChange();
 }
 
@@ -410,7 +409,7 @@ var HO_FIXED = new Date(2029,6,1);   // kept for compatibility — overridden dy
 var HO_DISPLAY = 'Jun 2029';
 
 function fmt(n){return 'AED '+Math.round(n).toLocaleString();}
-function getM(i){return parseInt(document.getElementById('sl'+i).value);}
+function getM(i){var el=document.getElementById('sl'+i);return el?parseInt(el.value):0;}
 function getDPDate(){var v=document.getElementById('dpDate').value,p=v.split('-');return new Date(parseInt(p[0]),parseInt(p[1])-1,1);}
 function addMonths(d,n){return new Date(d.getFullYear(),d.getMonth()+n,1);}
 function fmtDate(d){return d.toLocaleDateString('en-GB',{month:'short',year:'numeric'});}
@@ -431,8 +430,8 @@ function updateDueDates(){
   if(entBar) entBar.textContent=pv?fmt(pv*0.14):'—';
   var fpBar=document.getElementById('firstPayoutBar');
   if(fpBar) fpBar.textContent=fmtDate(addMonths(dp,3));
-  var ids=['due1','due2','due3','due4'];
-  dues.slice(0,4).forEach(function(d,i){
+  var ids=['due1','due2','due3'];
+  dues.slice(0,3).forEach(function(d,i){
     var el=document.getElementById(ids[i]);if(el)el.textContent=fmtDate(addMonths(dp,d));
   });
   // Set hodue text directly — always show full handover date (e.g. "30 Aug 2027")
@@ -443,13 +442,13 @@ function updateDueDates(){
     document.getElementById('hodue').innerHTML='Paid at actual handover ('+getHO_DISPLAY_FULL()+') · <b>No ROI on this amount</b>';
   }
   var sl5=document.getElementById('sl5');
-  sl5.min=dues[3];sl5.max=hoMo;
+  sl5.min=dues[2];sl5.max=hoMo;
   if(parseInt(sl5.value)>hoMo)sl5.value=hoMo;
-  if(parseInt(sl5.value)<dues[3])sl5.value=dues[3];
+  if(parseInt(sl5.value)<dues[2])sl5.value=dues[2];
 }
 
 function onSlide(idx){
-  for(var i=idx+1;i<=5;i++){
+  for(var i=idx+1;i<=4;i++){
     var sl=document.getElementById('sl'+i);if(!sl||sl.disabled)continue;
     var newMin=Math.min(getM(i-1),parseInt(sl.max));sl.min=newMin;
     if(parseInt(sl.value)<newMin)sl.value=newMin;
@@ -459,22 +458,24 @@ function onSlide(idx){
 
 function updateLabels(){
   var dp=getDPDate(),hoMo=getHOMonth(),dues=getInstDues();
-  for(var i=1;i<=5;i++){
-    var sl=document.getElementById('sl'+i);if(!sl)continue;
-    var m=parseInt(sl.value),isEarly=m<dues[i-1];
-    var el=document.getElementById('mv'+i);
-    var dateLabel=(i===5&&m===hoMo)?getHO_DISPLAY():fmtDate(addMonths(dp,m));
+  // sliders: sl1=inst1, sl2=inst2, sl3=inst3, sl5=handover (sl4 removed)
+  var sliderMap=[{id:1,dueIdx:0},{id:2,dueIdx:1},{id:3,dueIdx:2},{id:5,dueIdx:3}];
+  sliderMap.forEach(function(s){
+    var sl=document.getElementById('sl'+s.id);if(!sl)return;
+    var m=parseInt(sl.value),due=dues[s.dueIdx]||hoMo,isEarly=m<due;
+    var el=document.getElementById('mv'+s.id);if(!el)return;
+    var dateLabel=(s.id===5&&m===hoMo)?getHO_DISPLAY_FULL():fmtDate(addMonths(dp,m));
     el.textContent='Month '+m+' ('+dateLabel+')'+(isEarly?' ★':'');
     el.className='mo-lbl '+(isEarly?'early':'due');
-  }
+  });
 }
 
 // ── CORE ENGINE ───────────────────────────────────────────────────────────────
 // Builds the quarterly payout schedule with pro-rata first payout
 function computePayouts(pv, scenA){
   var dp=getDPDate(), hoMo=getHOMonth();
-  var instCount=scenA?5:4;
-  var instAmts=[pv*.10,pv*.20,pv*.20,pv*.20,pv*.20];
+  var instCount=scenA?4:3;
+  var instAmts=[pv*.10,pv*.20,pv*.20,pv*.40];
   var dpAmt=pv*.10;
   var instDues=getInstDues();
   var payMonths=[];
@@ -707,10 +708,10 @@ function generatePDF(){
   var oqoodFee=1060;
   var totalEntry=downPmt+dldAmt+adminFee+oqoodFee;
 
-  var instAmts=[pv*.10,pv*.20,pv*.20,pv*.20,pv*.20];
-  var instNames=['1st Installment (10%)','2nd Installment (20%)','3rd Installment (20%)','4th Installment (20%)','Handover Payment (20%)'];
+  var instAmts=[pv*.10,pv*.20,pv*.20,pv*.40];
+  var instNames=['1st Installment (10%)','2nd Installment (20%)','3rd Installment (20%)','Handover Payment (40%)'];
   var instDues=getInstDues();
-  var instCount=scenA?5:4;
+  var instCount=scenA?4:3;
 
   var schedRows='<tr class="dp-row"><td class="c">1</td><td>Down Payment</td>'
     +'<td>'+fmtDate(dp)+'</td><td class="r">'+fmt(downPmt)+'</td>'
@@ -720,17 +721,17 @@ function generatePDF(){
     var actualDate=fmtDate(addMonths(dp,actualMo));
     var dueDate=fmtDate(addMonths(dp,instDues[ii]));
     var earlyNote=actualMo<instDues[ii]?' <span style="color:#d97706;font-size:7pt">(early · due '+dueDate+')</span>':'';
-    var roiNote=ii===4?'* ROI from payment receipt (if paid before handover)':'ROI from payment receipt';
+    var roiNote=ii===3?'* ROI from payment receipt (if paid before handover)':'ROI from payment receipt';
     schedRows+='<tr><td class="c">'+(ii+2)+'</td><td>'+instNames[ii]+earlyNote+'</td>'
       +'<td class="bold">'+actualDate+'</td>'
       +'<td class="r bold">'+fmt(instAmts[ii])+'</td>'
-      +'<td class="c">'+(ii===0?10:20)+'%</td>'
+      +'<td class="c">'+(ii===0?10:ii===3?40:20)+'%</td>'
       +'<td class="gold" style="font-size:7.5pt">'+roiNote+'</td></tr>';
   }
   if(!scenA){
-    schedRows+='<tr><td class="c">'+(instCount+2)+'</td><td>Handover Payment (20%)</td>'
-      +'<td>'+hoDisp+'</td><td class="r">'+fmt(pv*.20)+'</td>'
-      +'<td class="c">20%</td><td style="color:#888;font-size:7.5pt">No ROI (paid at handover)</td></tr>';
+    schedRows+='<tr><td class="c">'+(instCount+2)+'</td><td>Handover Payment (40%)</td>'
+      +'<td>'+hoDisp+'</td><td class="r">'+fmt(pv*.40)+'</td>'
+      +'<td class="c">40%</td><td style="color:#888;font-size:7.5pt">No ROI (paid at handover)</td></tr>';
   }
   schedRows+='<tr style="background:#f5f4f0"><td></td><td><b>TOTAL</b></td><td></td>'
     +'<td class="r bold" style="font-size:9pt">'+fmt(pv)+'</td><td class="c bold">100%</td><td></td></tr>';
@@ -787,7 +788,7 @@ function generatePDF(){
       +'<div class="so-return-box feat"><div class="so-return-lbl">Total ROI Earned</div><div class="so-return-val gold">'+fmt(R.totalROI)+'</div></div>'
     +'</div>'
     +'<div class="so-disclaimer">'
-      +'<b>* ROI from payment receipt (if paid before handover)</b> \u2014 the Handover Payment (20%) earns ROI from the date the payment is received, provided it is before the actual handover date of '+hoDisp+'. If paid at handover, this installment carries no ROI. The Down Payment (10%) does not earn ROI in any scenario.<br><br>'
+      +'<b>* ROI from payment receipt (if paid before handover)</b> \u2014 the Handover Payment (40%) earns ROI from the date the payment is received, provided it is before the actual handover date of '+hoDisp+'. If paid at handover, this installment carries no ROI. The Down Payment (10%) does not earn ROI in any scenario.<br><br>'
       +'<b>DISCLAIMER \u2014 ILLUSTRATIVE PURPOSES ONLY</b><br>'
       +'This document is prepared for illustrative and indicative purposes only. Figures are projections based on the stated payment schedule and ROI structure (8% net per annum, paid quarterly, starting 3 months from the booking date). Actual returns are subject to the terms of the official SPA. This document does not constitute a legally binding commitment or financial advice. The handover date of '+hoDisp+' is a target and subject to change. If handover is delayed, ROI payments continue until actual handover. Investors should review the official SPA and seek independent legal and financial counsel before making any investment decision.<br><br>'
       +'<b>Default in Payments:</b> In case of default in payments, the developer reserves the right to cancel all future ROI payments.'
@@ -815,7 +816,13 @@ function generatePDF(){
 document.getElementById('propVal').addEventListener('input',render);
 document.getElementById('dpDate').addEventListener('change',function(){
   var dues=getInstDues();
-  for(var i=1;i<=5;i++){var sl=document.getElementById('sl'+i);if(sl){sl.max=dues[i-1];sl.min=i===1?0:dues[i-2];sl.value=dues[i-1];}}
+  var slMap=[{id:1,dueIdx:0},{id:2,dueIdx:1},{id:3,dueIdx:2},{id:5,dueIdx:3}];
+  slMap.forEach(function(s){
+    var sl=document.getElementById('sl'+s.id);if(!sl)return;
+    sl.max=dues[s.dueIdx]||hoMo;
+    sl.min=s.dueIdx===0?0:(dues[s.dueIdx-1]||0);
+    sl.value=dues[s.dueIdx]||hoMo;
+  });
   render();
 });
 document.getElementById('propName').addEventListener('change',render);
