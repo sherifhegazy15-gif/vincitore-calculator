@@ -685,7 +685,7 @@ function generatePDF(){
   var refNum='SIP-'+(dp.getMonth()+1<10?'0':'')+(dp.getMonth()+1)+dp.getFullYear()+'-'+Math.floor(Math.random()*9000+1000);
   var prepDate=fmtDateLong(new Date());
   var hoDisp=getHO_DISPLAY();
-  var dldAmt=Math.round(pv*0.04);
+  var dldAmt=Math.round(pv*0.04)+40;
   var downPmt=Math.round(pv*0.10);
   var adminFee=2500;
   var oqoodFee=1060;
@@ -730,6 +730,7 @@ function generatePDF(){
 
   var html=
   '<div class="so-page">'
+    +'<div style="text-align:center;background:#fffbf0;border:1px solid #D4B96A;border-radius:4px;padding:5px 12px;margin-bottom:10px;font-size:8pt;font-weight:700;color:#8A6E25;letter-spacing:.1em;text-transform:uppercase">ILLUSTRATIVE PURPOSES ONLY — NOT A LEGALLY BINDING DOCUMENT</div>'
     +'<div class="so-header"><div><div class="so-brand-name">VINCITORE REALTY</div><div class="so-brand-tag">Secured Investors Programme</div></div>'
     +'<div class="so-doc-title"><h2>Investment Offer</h2><p>Payment Schedule &amp; SIP Payout Projections</p></div></div>'
     +'<div class="so-meta">'
@@ -753,7 +754,7 @@ function generatePDF(){
         +'<table>'
         +'<tr><td>Property Value</td><td>'+fmt(pv)+'</td></tr>'
         +'<tr><td>Down Payment (10%)</td><td>'+fmt(downPmt)+'</td></tr>'
-        +'<tr><td>DLD Fee (4%)</td><td>'+fmt(dldAmt)+'</td></tr>'
+        +'<tr><td>DLD Fee (4%) + AED 40 (Processing charges)</td><td>'+fmt(dldAmt)+'</td></tr>'
         +'<tr><td>Admin Fee</td><td>AED 2,500</td></tr>'
         +'<tr><td>Oqood Registration Fee</td><td>AED 1,060</td></tr>'
         +'<tr><td style="font-weight:700;border-top:1px solid #ddd;padding-top:4px">Total Entry Cost</td><td style="font-weight:700;color:#B8973A;border-top:1px solid #ddd;padding-top:4px">'+fmt(totalEntry)+'</td></tr>'
@@ -772,7 +773,8 @@ function generatePDF(){
     +'<div class="so-disclaimer">'
       +'<b>* ROI from payment receipt (if paid before handover)</b> \u2014 the Handover Payment (20%) earns ROI from the date the payment is received, provided it is before the actual handover date of '+hoDisp+'. If paid at handover, this installment carries no ROI. The Down Payment (10%) does not earn ROI in any scenario.<br><br>'
       +'<b>DISCLAIMER \u2014 ILLUSTRATIVE PURPOSES ONLY</b><br>'
-      +'This document is prepared for illustrative and indicative purposes only. Figures are projections based on the stated payment schedule and ROI structure (8% net per annum, paid quarterly, starting 3 months from the booking date). Actual returns are subject to the terms of the official SPA. This document does not constitute a legally binding commitment or financial advice. The handover date of '+hoDisp+' is a target and subject to change. If handover is delayed, ROI payments continue until actual handover. Investors should review the official SPA and seek independent legal and financial counsel before making any investment decision.'
+      +'This document is prepared for illustrative and indicative purposes only. Figures are projections based on the stated payment schedule and ROI structure (8% net per annum, paid quarterly, starting 3 months from the booking date). Actual returns are subject to the terms of the official SPA. This document does not constitute a legally binding commitment or financial advice. The handover date of '+hoDisp+' is a target and subject to change. If handover is delayed, ROI payments continue until actual handover. Investors should review the official SPA and seek independent legal and financial counsel before making any investment decision.<br><br>'
+      +'<b>Default in Payments:</b> In case of default in payments, the developer reserves the right to cancel all future ROI payments.'
     +'</div>'
   +'</div>'
   +'<div class="so-page-2">'
