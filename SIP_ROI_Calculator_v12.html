@@ -517,9 +517,14 @@ function computePayouts(pv, scenA){
 
     var effectiveDuration=pd-prevDate;
     var isProRata=false;
+    var effectiveCalFrom=fmtDate(addMonths(dp,prevDate));
     if(prevDate===0){
       var firstPaymentMonth=timeline.length>0?timeline[0].month:0;
-      if(firstPaymentMonth>0){isProRata=true;effectiveDuration=pd-firstPaymentMonth;}
+      if(firstPaymentMonth>0){
+        isProRata=true;
+        effectiveDuration=pd-firstPaymentMonth;
+        effectiveCalFrom=fmtDate(addMonths(dp,firstPaymentMonth));
+      }
     }
 
     if(periodROI>0){
@@ -529,7 +534,7 @@ function computePayouts(pv, scenA){
         calDate   : fmtDate(addMonths(dp,pd)),
         periodFrom: prevDate,
         periodTo  : pd,
-        calFrom   : fmtDate(addMonths(dp,prevDate)),
+        calFrom   : effectiveCalFrom,
         calTo     : fmtDate(addMonths(dp,pd)),
         baseAtEnd : baseAt(pd-1)||curBase,
         duration  : effectiveDuration,
@@ -788,6 +793,7 @@ function generatePDF(){
     +'</table>'
     +'<div class="so-disclaimer" style="margin-top:14px">'
       +'<b>ROI calculation:</b> Each payout = ROI base \u00d7 8% \u00d7 (duration \u00f7 12). ROI base = cumulative installments paid (Down Payment excluded). First and final payouts may be pro-rated for partial quarters.<br><br>'
+      +'<b>For the purpose of calculation, all payments and payouts are considered to be receivable and payable at the beginning of the month.</b><br><br>'
       +'<b>Vincitore Realty</b> \u00b7 Ref: '+refNum+' \u00b7 '+prepDate
     +'</div>'
   +'</div>';
