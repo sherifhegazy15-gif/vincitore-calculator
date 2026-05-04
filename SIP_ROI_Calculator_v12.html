@@ -302,8 +302,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 // ── Project data ─────────────────────────────────────────────────
 var PROJECTS = {
   'Vincitore Wellness Estate': {
-    hoFixed:   new Date(2029,6,1),  // July 1 = includes full June 30
-    hoDisplay: 'Jun 2029',
+    hoFixed:      new Date(2029,6,1),
+    hoDisplay:    'Jun 2029',
+    hoDisplayFull:'30 Jun 2029',
     units: [
       {label:'Wellness Studio',                  price:832000},
       {label:'Wellness Sky Studio',              price:908000},
@@ -321,8 +322,9 @@ var PROJECTS = {
     ]
   },
   'Vincitore Aqua Flora': {
-    hoFixed:   new Date(2028,0,1),  // Jan 1 2028 = includes full Dec 30 2027
-    hoDisplay: 'Dec 2027',
+    hoFixed:      new Date(2028,0,1),
+    hoDisplay:    'Dec 2027',
+    hoDisplayFull:'30 Dec 2027',
     units: [
       {label:'Studio with Pool',                      price:1085000},
       {label:'1 BHK with Pool',                       price:1419000},
@@ -334,9 +336,10 @@ var PROJECTS = {
     ]
   },
   'Vincitore Aqua Dimore': {
-    hoFixed:   new Date(2027,8,1),
-    hoDisplay: 'Aug 2027',
-    dues: [1, 4, 8, 12],   // VAD-specific payment months
+    hoFixed:      new Date(2027,8,1),
+    hoDisplay:    'Aug 2027',
+    hoDisplayFull:'30 Aug 2027',
+    dues: [1, 4, 8, 12],
     units: [
       {label:'Studio with Pool',    price:1152000},
       {label:'1 BHK with Pool',     price:1377000},
@@ -355,6 +358,7 @@ function getProjectData(){
 }
 function getHO_FIXED(){return getProjectData().hoFixed;}
 function getHO_DISPLAY(){return getProjectData().hoDisplay;}
+function getHO_DISPLAY_FULL(){return getProjectData().hoDisplayFull||getProjectData().hoDisplay;}
 function getInstDues(){
   var proj=getProjectData();
   var hoMo=getHOMonth();
@@ -372,7 +376,7 @@ function onProjectChange(){
     opt.textContent=u.price>0?u.label+' — AED '+u.price.toLocaleString():u.label;
     sel.appendChild(opt);
   });
-  document.getElementById('hoDisplay').textContent=proj.hoDisplay;
+  document.getElementById('hoDisplay').textContent=proj.hoDisplayFull||proj.hoDisplay;
   // Update due labels in slider table
   var dues=getInstDues();
   var lblIds=['due1lbl','due2lbl','due3lbl','due4lbl'];
@@ -418,8 +422,8 @@ function updateDueDates(){
   var dp=getDPDate(), hoMo=getHOMonth(), dues=getInstDues();
   document.getElementById('dpCalDate').textContent=fmtDate(dp);
   document.getElementById('firstPayoutDate').textContent=fmtDate(addMonths(dp,3));
-  document.getElementById('roiWindow').textContent=fmtDate(addMonths(dp,1))+' – '+getHO_DISPLAY();
-  document.getElementById('handoverDisplay').textContent=getHO_DISPLAY();
+  document.getElementById('roiWindow').textContent=fmtDate(addMonths(dp,1))+' – '+getHO_DISPLAY_FULL();
+  document.getElementById('handoverDisplay').textContent=getHO_DISPLAY_FULL();
   // Update entry and first payout in bar
   var pvEl=document.getElementById('propVal');
   var pv=parseFloat(pvEl?pvEl.value:0)||0;
@@ -427,10 +431,17 @@ function updateDueDates(){
   if(entBar) entBar.textContent=pv?fmt(pv*0.14):'—';
   var fpBar=document.getElementById('firstPayoutBar');
   if(fpBar) fpBar.textContent=fmtDate(addMonths(dp,3));
-  var ids=['due1','due2','due3','due4','due5'];
-  dues.forEach(function(d,i){
+  var ids=['due1','due2','due3','due4'];
+  dues.slice(0,4).forEach(function(d,i){
     var el=document.getElementById(ids[i]);if(el)el.textContent=fmtDate(addMonths(dp,d));
   });
+  // Set hodue text directly — always show full handover date (e.g. "30 Aug 2027")
+  var scenA=document.getElementById('togA').className.indexOf('on')>=0;
+  if(scenA){
+    document.getElementById('hodue').innerHTML='Pay any time before handover · <b>'+getHO_DISPLAY_FULL()+'</b> · earns ROI from payment date';
+  }else{
+    document.getElementById('hodue').innerHTML='Paid at actual handover ('+getHO_DISPLAY_FULL()+') · <b>No ROI on this amount</b>';
+  }
   var sl5=document.getElementById('sl5');
   sl5.min=dues[3];sl5.max=hoMo;
   if(parseInt(sl5.value)>hoMo)sl5.value=hoMo;
@@ -667,10 +678,10 @@ function setScen(s){
     var hoMo=getHOMonth();
     sl5.max=hoMo;
     if(parseInt(sl5.value)>hoMo)sl5.value=hoMo;
-    document.getElementById('hodue').innerHTML='Pay any time before handover · <b id="due5">'+fmtDate(addMonths(getDPDate(),parseInt(sl5.value)))+'</b> · earns ROI from payment date';
+    document.getElementById('hodue').innerHTML='Pay any time before handover · <b>'+getHO_DISPLAY_FULL()+'</b> · earns ROI from payment date';
   }else{
     sl5.disabled=true;row5.className='dis-row';
-    document.getElementById('hodue').innerHTML='Paid at actual handover ('+getHO_DISPLAY()+') · <b id="due5">No ROI on this amount</b>';
+    document.getElementById('hodue').innerHTML='Paid at actual handover ('+getHO_DISPLAY_FULL()+') · <b id="due5">No ROI on this amount</b>';
   }
   render();
 }
@@ -689,7 +700,7 @@ function generatePDF(){
   var unitLabel=unitSel.options[unitSel.selectedIndex].text.replace(/\s*—\s*AED[\d,]+$/,'').replace(/Custom.*$/,'Custom');
   var refNum='SIP-'+(dp.getMonth()+1<10?'0':'')+(dp.getMonth()+1)+dp.getFullYear()+'-'+Math.floor(Math.random()*9000+1000);
   var prepDate=fmtDateLong(new Date());
-  var hoDisp=getHO_DISPLAY();
+  var hoDisp=getHO_DISPLAY_FULL();
   var dldAmt=Math.round(pv*0.04)+40;
   var downPmt=Math.round(pv*0.10);
   var adminFee=2500;
@@ -741,7 +752,7 @@ function generatePDF(){
     +'<div class="so-meta">'
       +'<div class="so-meta-item"><div class="so-meta-lbl">Reference</div><div class="so-meta-val">'+refNum+'</div></div>'
       +'<div class="so-meta-item"><div class="so-meta-lbl">Date prepared</div><div class="so-meta-val">'+prepDate+'</div></div>'
-      +'<div class="so-meta-item"><div class="so-meta-lbl">First SIP payout</div><div class="so-meta-val">'+fmtDate(addMonths(dp,3))+' (Month 3 from booking)</div></div>'
+      +'<div class="so-meta-item"><div class="so-meta-lbl">SIP Payout Until Handover</div><div class="so-meta-val">'+hoDisp+'</div></div>'
     +'</div>'
     +'<div class="so-two-col">'
       +'<div class="so-box"><div class="so-box-title">Property Details</div>'
