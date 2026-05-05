@@ -3,845 +3,1661 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SIP ROI Calculator — Vincitore Realty</title>
+<title>Vincitore — Agency Briefing Portal</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f5f4f0;color:#1a1a1a;min-height:100vh;padding:2rem 1rem}
-.page{max-width:960px;margin:0 auto}
-.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.75rem;padding-bottom:1.25rem;border-bottom:2px solid #D4B96A}
-.header h1{font-size:22px;font-weight:700;margin-bottom:2px}
-.header p{font-size:13px;color:#666}
-.logo-name{font-size:14px;font-weight:700;color:#8A6E25;letter-spacing:.06em;text-align:right}
-.logo-sub{font-size:11px;color:#aaa;margin-top:2px;text-align:right}
-.card{background:#fff;border-radius:12px;border:1px solid #e8e4d8;padding:1.5rem;margin-bottom:1.25rem}
-.card-title{font-size:14px;font-weight:700;color:#1a1a1a;margin-bottom:1.25rem;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.ctitle-note{font-size:12px;font-weight:400;color:#888}
-.badge{font-size:11px;font-weight:600;padding:2px 9px;border-radius:20px}
-.badge-a{background:#faf0dc;color:#8A6E25}
-.badge-b{background:#e8f5e9;color:#1E7E34}
-.badge-pr{background:#fef3e2;color:#d97706;border:1px solid #fcd34d}
-
-.inp-grid-4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:1rem;align-items:start}
-@media(max-width:720px){.inp-grid-4{grid-template-columns:1fr 1fr}}
-@media(max-width:480px){.inp-grid-4{grid-template-columns:1fr}}
-.inp-grp label{display:block;font-size:11px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px}
-.inp-ctrl{display:flex;align-items:center;border:1.5px solid #D4B96A;border-radius:8px;overflow:hidden;background:#fdfcf8}
-.inp-ctrl .pfx{padding:10px 12px;background:#faf7f0;border-right:1px solid #e8e4d8;font-size:13px;font-weight:600;color:#8A6E25;flex-shrink:0}
-.inp-ctrl input,.inp-ctrl select{border:none;background:transparent;padding:10px 12px;font-size:14px;font-weight:600;color:#1a1a1a;width:100%;outline:none;-webkit-appearance:none}
-.inp-ctrl input::placeholder{color:#ccc;font-weight:400;font-size:13px}
-.inp-note{margin-top:5px;font-size:11px;color:#888}
-.inp-note b{color:#B8973A}
-
-.ho-bar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;padding:10px 14px;background:#faf7f0;border:1px solid #e8d9a0;border-radius:8px;margin-top:1rem}
-.ho-item{display:flex;flex-direction:column;gap:1px}
-.ho-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#aaa}
-.ho-val{font-size:13px;font-weight:700;color:#1a1a1a}
-.ho-val.gold{color:#B8973A}
-
-.tog-group{display:flex;gap:8px;margin-top:6px}
-.tog{flex:1;padding:10px 8px;font-size:12px;border-radius:8px;border:1.5px solid #e0dbd0;background:#fdfcf8;color:#666;cursor:pointer;text-align:center;font-weight:600;transition:all .15s}
-.tog:hover{border-color:#D4B96A;color:#8A6E25}
-.tog.on{background:#B8973A;border-color:#B8973A;color:#fff}
-
-.sl-table{width:100%;border-collapse:collapse}
-.sl-table th{font-size:10px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.05em;padding:0 8px 10px;text-align:left}
-.sl-table td{padding:9px 8px;border-top:1px solid #f0ece2;vertical-align:middle}
-.inst-name{font-weight:600;font-size:13px;color:#1a1a1a}
-.inst-due{font-size:11px;color:#aaa;margin-top:1px}
-.inst-due b{color:#555;font-weight:600}
-.dp-row td{opacity:.5}
-.dis-row{opacity:.4}
-.sl-wrap{display:flex;align-items:center;gap:8px}
-.sl-wrap input[type=range]{flex:1;accent-color:#B8973A;cursor:pointer;height:20px}
-.sl-wrap input[type=range]:disabled{cursor:not-allowed}
-.mo-lbl{font-size:12px;font-weight:700;min-width:110px;text-align:right}
-.mo-lbl.due{color:#1E7E34}
-.mo-lbl.early{color:#B8973A}
-
-.hi-box{border-radius:8px;padding:10px 14px;font-size:12px;line-height:1.6;margin-bottom:1rem}
-.hi-box.gold{background:#fffbf0;border:1px solid #e8d9a0;color:#7a6020}
-.hi-box.gold b{color:#8A6E25}
-
-.sum-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:1.25rem}
-@media(max-width:600px){.sum-grid{grid-template-columns:1fr 1fr}}
-.sum-card{background:#fff;border-radius:12px;border:1px solid #e8e4d8;padding:1.25rem;text-align:center}
-.sum-lbl{font-size:11px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px}
-.sum-val{font-size:24px;font-weight:800}
-.sum-val.gold{color:#B8973A}
-.sum-val.green{color:#1E7E34}
-.sum-val.blue{color:#1A4D8A}
-.sum-sub{font-size:11px;color:#aaa;margin-top:4px}
-
-.res-tbl{width:100%;border-collapse:collapse;font-size:12px}
-.res-tbl th{text-align:left;padding:7px 8px;font-size:10px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid #f0ece2}
-.res-tbl td{padding:8px 8px;border-bottom:1px solid #f0ece2;vertical-align:middle}
-.res-tbl tr:last-child td{border-bottom:none}
-.res-tbl .tot td{background:#faf7f0;font-weight:700;font-size:13px;border-top:1px solid #e8e4d8}
-.tr{text-align:right}.tc{text-align:center}
-.td-gold{color:#B8973A;font-weight:700;text-align:right}
-.td-green{color:#1E7E34;font-weight:700;text-align:right}
-.td-mute{color:#888;font-size:11px}
-.td-prorata{color:#d97706;font-weight:600}
-.chip{display:inline-block;font-size:10px;background:#f5f4f0;color:#888;padding:1px 5px;border-radius:4px;margin-bottom:2px}
-.chip-pr{background:#fef3e2;color:#d97706;font-size:10px;padding:1px 5px;border-radius:4px;font-weight:600;display:inline-block;margin-left:4px}
-.chip-full{background:#e8f5e9;color:#1E7E34;font-size:10px;padding:1px 5px;border-radius:4px;font-weight:600;display:inline-block;margin-left:4px}
-
-.bar-row{display:flex;align-items:center;gap:10px;margin-bottom:6px}
-.bar-lbl{font-size:11px;color:#555;width:130px;flex-shrink:0}
-.bar-lbl.pr{color:#d97706}
-.bar-bg{flex:1;height:8px;background:#f0ece2;border-radius:4px;overflow:hidden}
-.bar-fill{height:100%;background:#B8973A;border-radius:4px;transition:width .3s}
-.bar-fill.pr{background:#f59e0b}
-.bar-val{font-size:11px;font-weight:700;color:#B8973A;width:80px;text-align:right;flex-shrink:0}
-
-.s-note{background:#faf7f0;border-left:3px solid #D4B96A;border-radius:0 8px 8px 0;padding:12px 14px;font-size:12px;color:#555;line-height:1.6;margin-top:1rem}
-.s-note b{color:#8A6E25}
-
-.cmp-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #f0ece2;font-size:13px}
-.cmp-row:last-child{border-bottom:none}
-.cmp-diff{color:#B8973A;font-weight:800}
-
-.empty-area{text-align:center;padding:3rem 1rem;color:#bbb}
-.empty-area p{font-size:14px;margin-top:12px}
-
-.pdf-row{display:flex;justify-content:flex-end;margin-bottom:1rem}
-.pdf-btn{display:flex;align-items:center;gap:6px;padding:10px 18px;border-radius:8px;border:none;background:#B8973A;color:#fff;font-size:13px;font-weight:700;cursor:pointer}
-.pdf-btn:hover{background:#8A6E25}
-
-.footer{text-align:center;padding-top:1.25rem;font-size:11px;color:#aaa;border-top:1px solid #e8e4d8;margin-top:.5rem}
-.footer b{color:#8A6E25}
-
-/* ═══════════ PRINT ═══════════ */
-#salesOffer{display:none}
-@media print{
-  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
-  .calculator-ui{display:none!important}
-  #salesOffer{display:block!important}
-  body{background:#fff!important;padding:0!important;font-family:Arial,sans-serif}
-  body::before{content:"ILLUSTRATIVE ONLY";position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-35deg);font-size:80px;font-weight:900;color:rgba(184,151,58,.09);white-space:nowrap;z-index:9999;pointer-events:none;letter-spacing:.05em}
-  .so-page{width:210mm;padding:13mm 15mm;font-family:Arial,sans-serif;font-size:9.5pt;color:#1a1a1a;page-break-after:always;page-break-inside:avoid}
-  .so-header{display:flex;align-items:flex-start;justify-content:space-between;padding-bottom:9px;border-bottom:3px solid #B8973A;margin-bottom:12px}
-  .so-brand-name{font-size:17pt;font-weight:900;color:#1a1a1a;letter-spacing:.05em;line-height:1}
-  .so-brand-tag{font-size:7.5pt;color:#8A6E25;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-top:2px}
-  .so-doc-title{text-align:right}
-  .so-doc-title h2{font-size:12pt;font-weight:900;color:#B8973A;text-transform:uppercase;letter-spacing:.05em;line-height:1}
-  .so-doc-title p{font-size:7.5pt;color:#666;margin-top:3px}
-  .so-meta{display:flex;gap:16px;flex-wrap:wrap;padding:7px 10px;background:#faf7f0;border:1px solid #e8d9a0;margin-bottom:12px;font-size:8pt}
-  .so-meta-item{display:flex;flex-direction:column;gap:1px}
-  .so-meta-lbl{font-size:6.5pt;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#aaa}
-  .so-meta-val{font-weight:700;color:#1a1a1a}
-  .so-meta-val.gold{color:#B8973A}
-  .so-two-col{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
-  .so-box{border:1px solid #e8e4d8;padding:8px 10px}
-  .so-box-title{font-size:7.5pt;font-weight:900;text-transform:uppercase;letter-spacing:.1em;color:#B8973A;border-bottom:1px solid #e8d9a0;padding-bottom:3px;margin-bottom:6px}
-  .so-box table{width:100%;border-collapse:collapse;font-size:8pt}
-  .so-box table td{padding:2.5px 0;vertical-align:top}
-  .so-box table td:first-child{color:#666;width:52%}
-  .so-box table td:last-child{font-weight:700;text-align:right}
-  .so-section-title{font-size:8.5pt;font-weight:900;text-transform:uppercase;letter-spacing:.1em;color:#8A6E25;border-left:3px solid #B8973A;padding-left:7px;margin:12px 0 7px}
-  .so-tbl{width:100%;border-collapse:collapse;font-size:8pt;margin-bottom:3px}
-  .so-tbl thead tr{background:#B8973A}
-  .so-tbl thead th{padding:5px 7px;text-align:left;font-size:7pt;font-weight:900;color:#fff;text-transform:uppercase;letter-spacing:.06em}
-  .so-tbl thead th.r{text-align:right}
-  .so-tbl thead th.c{text-align:center}
-  .so-tbl tbody tr:nth-child(even){background:#faf7f0}
-  .so-tbl tbody tr.pr-row{background:#fffbf0}
-  .so-tbl tbody td{padding:5px 7px;border-bottom:1px solid #f0ece2;vertical-align:middle}
-  .so-tbl tbody td.r{text-align:right}
-  .so-tbl tbody td.c{text-align:center}
-  .so-tbl tbody td.bold{font-weight:700}
-  .so-tbl tbody td.gold{color:#B8973A;font-weight:700}
-  .so-tbl tbody td.green{color:#1E7E34;font-weight:700}
-  .so-tbl tbody td.amber{color:#d97706;font-weight:700}
-  .so-tbl tfoot tr{background:#1a1a1a}
-  .so-tbl tfoot td{padding:6px 7px;font-weight:900;color:#fff;font-size:9pt}
-  .so-tbl tfoot td.r{text-align:right}
-  .so-tbl .dp-row td{background:#f5f4f0;color:#888;font-style:italic}
-  .so-returns{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
-  .so-return-box{border:1px solid #e8e4d8;padding:8px 6px;text-align:center}
-  .so-return-box.feat{border-color:#B8973A;background:#fffbf0}
-  .so-return-lbl{font-size:6.5pt;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#aaa;margin-bottom:3px}
-  .so-return-val{font-size:11pt;font-weight:900}
-  .so-return-val.gold{color:#B8973A}
-  .so-return-val.green{color:#1E7E34}
-  .so-disclaimer{border-top:1px solid #e8e4d8;padding-top:8px;margin-top:12px;font-size:6.5pt;color:#888;line-height:1.6}
-  .so-disclaimer b{color:#555}
-  .so-sig{display:grid;grid-template-columns:1fr 1fr;gap:40px;margin-top:14px;padding-top:10px;border-top:1px dashed #ddd}
-  .so-sig-line{border-bottom:1px solid #999;height:26px;margin-bottom:3px}
-  .so-sig-lbl{font-size:7pt;color:#888;font-weight:700;text-transform:uppercase;letter-spacing:.06em}
-  .so-sig-sub{font-size:6.5pt;color:#aaa}
-  .so-page-2{width:210mm;padding:13mm 15mm;font-family:Arial,sans-serif;font-size:9.5pt;color:#1a1a1a;page-break-inside:avoid}
-  .so-pg2-hdr{display:flex;justify-content:space-between;align-items:center;padding-bottom:7px;border-bottom:2px solid #B8973A;margin-bottom:12px;font-size:8pt}
-  .so-pg2-brand{font-weight:900;color:#8A6E25;letter-spacing:.06em}
-  .pr-tag{display:inline-block;font-size:6.5pt;font-weight:700;background:#fef3e2;color:#d97706;padding:1px 4px;border-radius:3px;margin-left:2px}
+:root{
+  --gold:#B8973A;--dgold:#8A6E25;--lgold:#FDF6E3;--egold:#F5EDD0;
+  --dark:#0C0B09;--dark2:#1C1912;--cream:#F5F0E8;
+  --text:#1a1a1a;--muted:#666;--border:#e8e4d8;
+  --green:#1E7E34;--red:#C0392B;--blue:#1A4D8A;--orange:#D97706;
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--cream);color:var(--text);min-height:100vh}
+input,select,textarea,button{font-family:inherit}
+/* AUTH */
+#authScreen{display:flex;align-items:center;justify-content:center;min-height:100vh;background:linear-gradient(135deg,var(--dark),var(--dark2))}
+.auth-card{background:#fff;border-radius:16px;padding:2.5rem;width:380px;box-shadow:0 20px 60px rgba(0,0,0,.4)}
+.auth-logo{text-align:center;margin-bottom:1.75rem}
+.auth-logo img{width:80px;height:80px;object-fit:contain;margin-bottom:10px}
+.auth-logo h1{font-size:16px;font-weight:700;color:var(--dark);letter-spacing:.08em;margin-bottom:3px}
+.auth-logo p{font-size:11px;color:var(--muted);letter-spacing:.06em}
+.auth-error{background:#fff0f0;border:1px solid #fcc;color:var(--red);padding:8px 12px;border-radius:6px;font-size:12px;margin-bottom:12px;display:none}
+.form-label{display:block;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:5px}
+.form-input{width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:8px;font-size:14px;outline:none;transition:border .2s;margin-bottom:14px}
+.form-input:focus{border-color:var(--gold)}
+.auth-btn{width:100%;padding:12px;background:var(--gold);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer}
+.auth-btn:hover{background:var(--dgold)}
+.connecting{text-align:center;color:var(--muted);font-size:13px;padding:1rem}
+/* LAYOUT */
+#app{display:none;min-height:100vh;flex-direction:column}
+.topbar{background:var(--dark);padding:0 1.5rem;height:56px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.topbar-left{display:flex;align-items:center;gap:12px}
+.topbar-left img{height:38px;object-fit:contain}
+.topbar-divider{color:#444;font-size:18px}
+.topbar-title{font-size:13px;color:#aaa}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.topbar-user{font-size:12px;color:#ccc}
+.role-badge{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.1em;padding:2px 8px;border-radius:10px;background:rgba(184,151,58,.2);color:var(--gold)}
+.topbar-btn{background:none;border:1px solid #444;color:#aaa;padding:5px 12px;border-radius:6px;font-size:12px;cursor:pointer;transition:all .2s}
+.topbar-btn:hover{border-color:#888;color:#fff}
+.event-switcher{background:rgba(184,151,58,.15);border:1px solid var(--gold);color:var(--gold);padding:4px 10px;border-radius:6px;font-size:12px;cursor:pointer;max-width:200px}
+.save-ind{font-size:11px;color:#4caf7d;opacity:0;transition:opacity .5s}
+.main{display:flex;flex:1;min-height:calc(100vh - 56px)}
+/* SIDEBAR */
+.sidebar{width:220px;background:#fff;border-right:1px solid var(--border);padding:1rem 0;flex-shrink:0;overflow-y:auto}
+.nav-sep{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);padding:12px 20px 4px}
+.nav-item{display:flex;align-items:center;gap:8px;padding:9px 16px;cursor:pointer;font-size:13px;color:var(--muted);transition:all .15s;margin:1px 8px;border-radius:8px}
+.nav-item:hover{background:var(--lgold);color:var(--dgold)}
+.nav-item.active{background:var(--egold);color:var(--dgold);font-weight:600}
+.content{flex:1;padding:1.5rem;overflow-y:auto;background:var(--cream)}
+/* COMPONENTS */
+.page-header{margin-bottom:1.5rem}
+.ph-row{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px}
+.page-title{font-size:22px;font-weight:600;color:var(--dark)}
+.page-sub{font-size:13px;color:var(--muted);margin-top:4px}
+.actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.card{background:#fff;border-radius:10px;border:1px solid var(--border);padding:1.25rem;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.card-title{font-size:13px;font-weight:600;margin-bottom:1rem;display:flex;align-items:center;gap:6px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem}
+@media(max-width:700px){.g2,.g3,.g4{grid-template-columns:1fr 1fr}}
+.stat{background:#fff;border-radius:10px;border:1px solid var(--border);padding:1.25rem;text-align:center}
+.stat-n{font-size:32px;font-weight:700;color:var(--gold);line-height:1}
+.stat-l{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-top:6px}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all .15s}
+.btn-gold{background:var(--gold);color:#fff}.btn-gold:hover{background:var(--dgold)}
+.btn-outline{background:#fff;color:var(--dgold);border:1.5px solid var(--gold)}.btn-outline:hover{background:var(--lgold)}
+.btn-red{background:var(--red);color:#fff}.btn-red:hover{background:#a02020}
+.btn-green{background:var(--green);color:#fff}
+.btn-blue{background:var(--blue);color:#fff}.btn-blue:hover{background:#153d70}
+.btn-sm{padding:5px 10px;font-size:12px;border-radius:6px}
+.btn-xs{padding:3px 8px;font-size:11px;border-radius:5px}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:600;text-transform:uppercase}
+.badge-confirmed{background:#e8f5e9;color:var(--green)}
+.badge-attended{background:#e3f2fd;color:var(--blue)}
+.badge-noshow{background:#fce4ec;color:var(--red)}
+.badge-cancelled{background:#f5f5f5;color:#999}
+/* CALENDAR */
+.venue-tabs{display:flex;gap:8px;margin-bottom:1rem;flex-wrap:wrap}
+.venue-tab{padding:8px 16px;border-radius:8px;font-size:13px;cursor:pointer;border:1.5px solid var(--border);color:var(--muted);background:#fff;transition:all .15s}
+.venue-tab.active{border-color:var(--gold);background:var(--egold);color:var(--dgold);font-weight:600}
+.cal-wrap{overflow-x:auto}
+.cal-tbl{border-collapse:collapse;min-width:100%;font-size:12px}
+.cal-tbl th{background:var(--dark);color:#fff;padding:10px 8px;text-align:center;font-size:11px;font-weight:600;white-space:nowrap;border:1px solid #333;min-width:145px}
+.cal-tbl th.slot-th{background:var(--dgold);min-width:125px}
+.cal-tbl td{border:1px solid var(--border);padding:4px;vertical-align:top}
+.slot-lbl{padding:9px 8px;font-size:11px;font-weight:600;color:var(--dgold);text-align:center;white-space:nowrap;background:var(--egold)}
+.sc{min-height:85px;padding:5px;border-radius:4px;transition:background .15s}
+.sc-avail{background:#fff;cursor:pointer}.sc-avail:hover{background:var(--lgold)}
+.sc-mine{background:#e8f5e9;cursor:pointer}.sc-mine:hover{background:#d4edda}
+.sc-other{background:#fff8f8}
+.sc-full{background:#f9f9f9}
+.sc-status{font-size:10px;font-weight:600;margin-bottom:4px}
+.bk-chip{border-radius:4px;padding:4px 6px;margin:2px 0;font-size:10px;line-height:1.4;cursor:pointer;display:block}
+.bk-chip-mine{background:#c8e6c9;border:1px solid #a5d6a7;color:#1b5e20}
+.bk-chip-other{background:var(--lgold);border:1px solid #e8d9a0;color:var(--dgold)}
+.bk-chip-masked{background:#f5f5f5;border:1px solid #e0e0e0;color:#aaa;cursor:default}
+.add-btn{display:flex;align-items:center;justify-content:center;border:1.5px dashed var(--gold);border-radius:5px;padding:6px;color:var(--gold);font-size:11px;cursor:pointer;margin-top:3px;transition:all .15s;font-weight:500}
+.add-btn:hover{background:var(--lgold)}
+.pax-bar{height:3px;background:#e0e0e0;border-radius:2px;margin-top:4px;overflow:hidden}
+.pax-fill{height:100%;border-radius:2px;transition:width .3s}
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000;display:flex;align-items:center;justify-content:center;padding:1rem}
+.modal{background:#fff;border-radius:12px;width:100%;max-width:540px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.modal-hdr{padding:1.25rem 1.5rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.modal-title{font-size:16px;font-weight:600}
+.modal-x{background:none;border:none;font-size:22px;cursor:pointer;color:var(--muted);line-height:1}
+.modal-body{padding:1.5rem}
+.modal-foot{padding:1rem 1.5rem;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap}
+.fg{margin-bottom:1rem}
+.fg label{display:block;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:5px}
+.fg label.req::after{content:" *";color:var(--red)}
+.fg input,.fg select,.fg textarea{width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;outline:none;transition:border .2s}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--gold)}
+.fg textarea{resize:vertical;min-height:70px}
+.fg .hint{font-size:11px;color:var(--muted);margin-top:3px}
+.fr2{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.alert{padding:10px 14px;border-radius:8px;font-size:12px;margin-bottom:1rem;display:flex;align-items:flex-start;gap:8px;line-height:1.5}
+.alert-info{background:#e3f2fd;border:1px solid #bbdefb;color:var(--blue)}
+.alert-warn{background:#fff8e1;border:1px solid #ffe082;color:var(--orange)}
+.alert-ok{background:#e8f5e9;border:1px solid #c8e6c9;color:var(--green)}
+/* TABLE */
+.tbl{width:100%;border-collapse:collapse;font-size:13px}
+.tbl th{text-align:left;padding:9px 10px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);border-bottom:2px solid var(--border);background:var(--lgold)}
+.tbl td{padding:9px 10px;border-bottom:1px solid var(--border);vertical-align:middle}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tr:hover td{background:var(--lgold)}
+/* PERMS */
+.perm-tbl{width:100%;border-collapse:collapse;font-size:12px}
+.perm-tbl th{padding:8px 10px;background:var(--dark);color:#fff;font-size:11px;font-weight:600;text-align:center;border:1px solid #333}
+.perm-tbl th:first-child{text-align:left;background:var(--dgold)}
+.perm-tbl td{padding:8px 10px;border:1px solid var(--border);text-align:center;vertical-align:middle}
+.perm-tbl td:first-child{text-align:left;font-weight:500;background:var(--lgold)}
+.perm-tbl tr:hover td{background:#faf7f0}
+.perm-tbl tr:hover td:first-child{background:var(--egold)}
+.tog{position:relative;display:inline-block;width:40px;height:22px}
+.tog input{opacity:0;width:0;height:0}
+.tog-sl{position:absolute;cursor:pointer;inset:0;background:#ccc;border-radius:22px;transition:.2s}
+.tog-sl:before{position:absolute;content:"";height:16px;width:16px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.2s}
+.tog input:checked+.tog-sl{background:var(--gold)}
+.tog input:checked+.tog-sl:before{transform:translateX(18px)}
+.tog input:disabled+.tog-sl{opacity:.5;cursor:not-allowed}
+/* CONFIG */
+.cfg-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin-bottom:1rem}
+.venue-cfg{border:1px solid var(--border);border-radius:8px;padding:1rem;background:var(--lgold);margin-bottom:.75rem;display:flex;gap:1rem;align-items:flex-end}
+.venue-cfg .fg{margin-bottom:0;flex:1}
+/* ROLES */
+.role-card{border:1px solid var(--border);border-radius:8px;padding:1rem;background:#fff;margin-bottom:.75rem;display:flex;justify-content:space-between;align-items:center}
+.role-card.is-system{border-color:var(--gold);background:var(--lgold)}
+.empty{text-align:center;padding:3rem 1rem;color:var(--muted)}
+.empty .ei{font-size:40px;margin-bottom:.75rem}
+.empty p{font-size:14px}
+/* PHONE INPUT */
+.phone-wrap{display:flex;gap:0;border:1.5px solid var(--border);border-radius:8px;overflow:hidden;transition:border .2s}
+.phone-wrap:focus-within{border-color:var(--gold)}
+.phone-cc{padding:9px 10px;background:var(--egold);border-right:1.5px solid var(--border);font-size:13px;font-weight:600;color:var(--dgold);white-space:nowrap;flex-shrink:0}
+.phone-num{border:none!important;border-radius:0!important;flex:1;outline:none;padding:9px 12px;font-size:13px}
+.phone-err{font-size:11px;color:var(--red);margin-top:3px;display:none}
+/* MOBILE HAMBURGER */
+.hamburger{display:none;background:none;border:none;cursor:pointer;padding:4px;flex-direction:column;gap:5px}
+.hamburger span{display:block;width:22px;height:2px;background:#ccc;border-radius:2px;transition:all .2s}
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:99}
+/* MOBILE BREAKPOINTS */
+@media(max-width:768px){
+  /* Auth */
+  .auth-card{width:calc(100vw - 2rem);padding:2rem 1.5rem}
+  /* Topbar */
+  .topbar{padding:0 1rem}
+  .topbar-divider,.topbar-title,.topbar-user,.event-switcher{display:none}
+  .hamburger{display:flex}
+  .save-ind{display:none}
+  /* Sidebar — slide in */
+  .sidebar{position:fixed;left:-240px;top:56px;height:calc(100vh - 56px);z-index:100;transition:left .25s;box-shadow:4px 0 20px rgba(0,0,0,.15);width:240px}
+  .sidebar.open{left:0}
+  .sidebar-overlay.open{display:block}
+  /* Content */
+  .content{padding:1rem}
+  /* Grids */
+  .g2,.g3,.g4{grid-template-columns:1fr 1fr}
+  .g4{grid-template-columns:1fr 1fr}
+  .fr2{grid-template-columns:1fr}
+  .cfg-grid{grid-template-columns:1fr}
+  /* Page header */
+  .ph-row{flex-direction:column;gap:10px}
+  .actions{width:100%}
+  .actions .btn{flex:1;justify-content:center}
+  /* Tables — scroll */
+  .card{overflow-x:auto;padding:1rem}
+  .tbl,.perm-tbl,.cal-tbl{min-width:520px}
+  /* Stats */
+  .stat-n{font-size:24px}
+  /* Modal */
+  .modal-overlay{align-items:flex-end;padding:0}
+  .modal{border-radius:16px 16px 0 0;max-height:85vh;max-width:100%}
+  /* Venue tabs */
+  .venue-tab{font-size:12px;padding:6px 10px}
+  /* Role cards */
+  .role-card{flex-direction:column;align-items:flex-start;gap:8px}
+  .role-card > div:last-child{width:100%;display:flex;gap:6px}
+  .role-card > div:last-child .btn{flex:1;justify-content:center}
+  /* Venue config */
+  .venue-cfg{flex-direction:column}
+  .venue-cfg .fg{width:100%}
+  /* Modal foot */
+  .modal-foot{flex-direction:column-reverse}
+  .modal-foot .btn{width:100%;justify-content:center}
+}
+@media(max-width:400px){
+  .g2,.g4{grid-template-columns:1fr}
+  .page-title{font-size:18px}
 }
 </style>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
 </head>
 <body>
-
-<div class="calculator-ui">
-<div class="page">
-  <div class="header">
-    <div><h1>SIP ROI Calculator</h1><p>Secured Investors Programme — quarterly payout schedule with pro-rata first payment</p></div>
-    <div><div class="logo-name">VINCITORE REALTY</div><div class="logo-sub">Internal Use Only</div></div>
-  </div>
-
-  <!-- Details -->
-  <div class="card">
-    <div class="card-title">Investment details</div>
-    <div class="inp-grid-4">
-      <div class="inp-grp">
-        <label>Project</label>
-        <div class="inp-ctrl"><select id="propName" onchange="onProjectChange()">
-          <option value="Vincitore Wellness Estate">Vincitore Wellness Estate</option>
-          <option value="Vincitore Aqua Dimore">Vincitore Aqua Dimore</option>
-          <option value="Vincitore Aqua Flora">Vincitore Aqua Flora</option>
-        </select></div>
-      </div>
-      <div class="inp-grp">
-        <label>Unit type</label>
-        <div class="inp-ctrl"><select id="unitType" onchange="onUnitChange()"></select></div>
-        <div class="inp-note">Handover: <b id="hoDisplay">—</b></div>
-      </div>
-      <div class="inp-grp">
-        <label>Property value</label>
-        <div class="inp-ctrl"><span class="pfx">AED</span><input type="number" id="propVal" placeholder="Enter value" min="100000" max="20000000" step="1000" oninput="render()"></div>
-        <div class="inp-note">Entry: <b id="entryAmt">—</b> (10% DP + 4% DLD)</div>
-      </div>
-      <div class="inp-grp">
-        <label>DP Month</label>
-        <div class="inp-ctrl"><select id="dpDate"><option value="2026-05">May 2026</option></select></div>
-        <div class="inp-note">First payout: <b id="firstPayoutDate">—</b></div>
-      </div>
+<div id="authScreen">
+  <div class="auth-card">
+    <div class="auth-logo">
+      <img id="authLogo" alt="Vincitore">
+      <h1>VINCITORE REALTY</h1>
+      <p>AGENCY BRIEFING PORTAL</p>
     </div>
-    <div class="ho-bar">
-      <div style="display:flex;gap:0;flex-wrap:wrap;width:100%;justify-content:space-between;align-items:center">
-        <div class="ho-item"><div class="ho-lbl">Handover</div><div class="ho-val gold" id="handoverDisplay">—</div></div>
-        <div class="ho-item"><div class="ho-lbl">Total SIP Payouts</div><div class="ho-val" id="totalPayouts">—</div></div>
-        <div class="ho-item"><div class="ho-lbl">ROI window</div><div class="ho-val" id="roiWindow">—</div></div>
-        <div class="ho-item"><div class="ho-lbl">Down Payment Entry</div><div class="ho-val" id="entryAmtBar">—</div></div>
-        <div class="ho-item"><div class="ho-lbl">First SIP Payout</div><div class="ho-val" id="firstPayoutBar">—</div></div>
-      </div>
-    </div>
-    <div style="margin-top:1rem">
-      <label style="display:block;font-size:11px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px">Handover payment (20%)</label>
-      <div class="tog-group" style="max-width:420px">
-        <button class="tog"    id="togA" onclick="setScen('A')">Pay before handover</button>
-        <button class="tog on" id="togB" onclick="setScen('B')">Pay at handover</button>
-      </div>
+    <div id="connectingMsg" class="connecting">⏳ Connecting to database…</div>
+    <div id="loginForm" style="display:none">
+      <div class="auth-error" id="authError">Invalid username or password</div>
+      <label class="form-label">Username</label>
+      <input class="form-input" type="text" id="loginUser" placeholder="Username" autocomplete="username">
+      <label class="form-label">Password</label>
+      <input class="form-input" type="password" id="loginPass" placeholder="Password">
+      <button class="auth-btn" onclick="doLogin()">Sign In</button>
     </div>
   </div>
-
-  <!-- Timing -->
-  <div class="card">
-    <div class="card-title">Payment timing <span class="ctitle-note">— slide left to pay earlier and earn more ROI</span></div>
-    <table class="sl-table">
-      <thead><tr><th style="width:32%">Installment</th><th style="width:52%">Pay at month from DP</th><th style="text-align:right;width:16%">Selected</th></tr></thead>
-      <tbody>
-        <tr class="dp-row">
-          <td><div class="inst-name">Down payment (10%)</div><div class="inst-due">Month 0 · <b id="dpCalDate">—</b> · No ROI unless 100% upfront</div></td>
-          <td><div class="sl-wrap"><input type="range" min="0" max="0" value="0" disabled></div></td>
-          <td style="text-align:right"><span style="font-size:11px;color:#aaa">Month 0</span></td>
-        </tr>
-        <tr><td><div class="inst-name">1st installment (10%)</div><div class="inst-due">Due: <span id="due1lbl">Month 1</span> · <b id="due1">—</b></div></td><td><div class="sl-wrap"><input type="range" id="sl1" min="0" max="1" value="1" step="1" oninput="onSlide(1)"></div></td><td><div class="mo-lbl due" id="mv1">—</div></td></tr>
-        <tr><td><div class="inst-name">2nd installment (20%)</div><div class="inst-due">Due: <span id="due2lbl">Month 6</span> · <b id="due2">—</b></div></td><td><div class="sl-wrap"><input type="range" id="sl2" min="1" max="6" value="6" step="1" oninput="onSlide(2)"></div></td><td><div class="mo-lbl due" id="mv2">—</div></td></tr>
-        <tr><td><div class="inst-name">3rd installment (20%)</div><div class="inst-due">Due: <span id="due3lbl">Month 12</span> · <b id="due3">—</b></div></td><td><div class="sl-wrap"><input type="range" id="sl3" min="6" max="12" value="12" step="1" oninput="onSlide(3)"></div></td><td><div class="mo-lbl due" id="mv3">—</div></td></tr>
-        <tr id="row5"><td><div class="inst-name">Handover payment (40%)</div><div class="inst-due" id="hodue">Pay any time before handover · <b id="due5">—</b> · earns ROI from payment date</div></td><td><div class="sl-wrap"><input type="range" id="sl5" min="10" max="37" value="37" step="1" oninput="onSlide(5)"></div></td><td><div class="mo-lbl due" id="mv5">—</div></td></tr>
-      </tbody>
-    </table>
+</div>
+<div id="app">
+  <div class="topbar">
+    <div class="topbar-left">
+      <button class="hamburger" onclick="toggleSidebar()" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+      <img id="topbarLogo" alt="Vincitore">
+      <span class="topbar-divider">|</span>
+      <span class="topbar-title" id="topbarEventName">Agency Briefing Portal</span>
+    </div>
+    <div class="topbar-right">
+      <span class="save-ind" id="saveInd">✓ Saved</span>
+      <select class="event-switcher" id="eventSwitcher" onchange="switchEvent(this.value)" style="display:none" title="Switch event"></select>
+      <span class="topbar-user" id="topbarUser"></span>
+      <span class="role-badge" id="topbarRole"></span>
+      <button class="topbar-btn" onclick="doLogout()">Sign Out</button>
+    </div>
   </div>
-
-  <div id="emptyState"><div class="empty-area">
-    <svg width="48" height="48" viewBox="0 0 48 48" fill="none"><rect x="8" y="14" width="32" height="26" rx="3" stroke="#B8973A" stroke-width="1.5"/><path d="M16 14V10C16 9 16.9 8 18 8H30C31.1 8 32 9 32 10V14" stroke="#B8973A" stroke-width="1.5"/><line x1="18" y1="25" x2="30" y2="25" stroke="#B8973A" stroke-width="1.5" stroke-linecap="round"/></svg>
-    <p>Enter a property value above to see your ROI calculation</p>
-  </div></div>
-
-  <div id="resultsArea" style="display:none">
-    <div class="pdf-row"><button class="pdf-btn" onclick="generatePDF()">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><polyline points="9 15 12 18 15 15"/></svg>
-      Export Investment Offer PDF
-    </button></div>
-
-    <div id="dpNote" class="hi-box gold" style="display:none"><b>100% upfront payment — ROI calculated on 90%</b> — the down payment (10%) never earns ROI. ROI base = 90% of property value from Month 0.</div>
-
-    <div style="margin-bottom:1.25rem;text-align:center">
-      <div style="background:#fff;border-radius:12px;border:1px solid #e8e4d8;padding:1.75rem 2rem;display:inline-block;min-width:280px;box-shadow:0 1px 4px rgba(0,0,0,.06)">
-        <div class="sum-lbl">Total ROI Earned</div>
-        <div style="font-size:42px;font-weight:800;color:#B8973A;line-height:1;margin:8px 0" id="totalROI">—</div>
-        <div class="sum-sub">8% net per annum · paid quarterly · <span id="totalPayoutsCount">—</span></div>
-      </div>
+  <div class="main">
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+    <div class="sidebar" id="sidebar"></div>
+    <div class="content" id="content"><div class="connecting">Loading…</div></div>
+  </div>
+</div>
+<div class="modal-overlay" id="modal" style="display:none">
+  <div class="modal">
+    <div class="modal-hdr">
+      <span class="modal-title" id="modalTitle"></span>
+      <button class="modal-x" onclick="closeModal()">×</button>
     </div>
-
-    <div class="card">
-      <div class="card-title">Quarterly payout schedule <span class="badge" id="scenBadge">Scenario A</span></div>
-      <table class="res-tbl">
-        <thead><tr>
-          <th class="tc" style="width:5%">#</th>
-          <th style="width:22%">Payout date</th>
-          <th style="width:25%">Period covered</th>
-          <th class="tc" style="width:13%">Duration</th>
-          <th class="tr" style="width:35%">Payout amount</th>
-        </tr></thead>
-        <tbody id="payoutTbody"></tbody>
-      </table>
-    </div>
-
-    <div class="card">
-      <div class="card-title">Payout amounts over time</div>
-      <div id="bars"></div>
-      <div class="s-note" id="sNote"></div>
-    </div>
-  </div><!-- end resultsArea -->
-  <div class="footer"><b>Vincitore Realty</b> — SIP · 8% Net ROI p.a. · Payouts every 3 months from DP date · Internal Use Only</div>
-</div></div>
-
-<div id="salesOffer"></div>
-
+    <div class="modal-body" id="modalBody"></div>
+    <div class="modal-foot" id="modalFoot"></div>
+  </div>
+</div>
 <script>
-// ── Project data ─────────────────────────────────────────────────
-var PROJECTS = {
-  'Vincitore Wellness Estate': {
-    hoFixed:      new Date(2029,6,1),
-    hoDisplay:    'Jun 2029',
-    hoDisplayFull:'30 Jun 2029',
-    units: [
-      {label:'Wellness Studio',                  price:832000},
-      {label:'Wellness Sky Studio',              price:908000},
-      {label:'1 BHK Wellness Residence',         price:1217000},
-      {label:'1 BHK Sky Wellness Residence',     price:1206000},
-      {label:'1.5 BHK Wellness Residence',       price:1413000},
-      {label:'1.5 BHK Sky Wellness Residence',   price:1523000},
-      {label:'2 BHK Wellness Residence',         price:1752000},
-      {label:'2 BHK Sky Wellness Residence',     price:1906000},
-      {label:'2.5 BHK Wellness Residence',       price:2146000},
-      {label:'2.5 BHK Sky Wellness Residence',   price:2245000},
-      {label:'3.5 BHK Wellness Villa with Pool', price:3230000},
-      {label:'3.5 BHK Sky Wellness Villa with Pool',price:3451000},
-      {label:'Custom — enter value manually',    price:0},
-    ]
-  },
-  'Vincitore Aqua Flora': {
-    hoFixed:      new Date(2028,0,1),
-    hoDisplay:    'Dec 2027',
-    hoDisplayFull:'30 Dec 2027',
-    units: [
-      {label:'Studio with Pool',                      price:1085000},
-      {label:'1 BHK with Pool',                       price:1419000},
-      {label:'1 BHK with Pool and Terrace Garden',    price:1427000},
-      {label:'1.5 BHK with Pool',                     price:1632000},
-      {label:'2 BHK',                                 price:1813000},
-      {label:'3.5 BHK Aqua Villa with Pool',          price:3226000},
-      {label:'Custom — enter value manually',         price:0},
-    ]
-  },
-  'Vincitore Aqua Dimore': {
-    hoFixed:      new Date(2027,8,1),
-    hoDisplay:    'Aug 2027',
-    hoDisplayFull:'30 Aug 2027',
-    units: [
-      {label:'Studio with Pool',    price:1152000},
-      {label:'1 BHK with Pool',     price:1377000},
-      {label:'1.5 BHK with Pool',   price:1768000},
-      {label:'2 BHK with Pool',     price:2223000},
-      {label:'2.5 BHK with Pool',   price:2315000},
-      {label:'3 BHK with Pool',     price:2819000},
-      {label:'Custom — enter value manually', price:0},
-    ]
-  }
+// ── Firebase ──────────────────────────────────────────────────────
+firebase.initializeApp({
+  apiKey:"AIzaSyCo6FZCyp7pMXq0cd5N1IoXxT-_D5Gr5V8",
+  authDomain:"vincitore-project.firebaseapp.com",
+  databaseURL:"https://vincitore-project-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId:"vincitore-project",storageBucket:"vincitore-project.firebasestorage.app",
+  messagingSenderId:"359961024997",appId:"1:359961024997:web:e1ef0d455171252100370c"
+});
+const DB=firebase.database();
+var LOGO='';
+
+// ── Constants & State ─────────────────────────────────────────────
+var CU=null,PAGE='dashboard',VENUE_IDX=0,ACTIVE_EID=null;
+var CACHE={users:{},eventsMeta:{},cfg:null,bookings:{},videoBookings:{}};
+
+// All configurable permissions
+var ALL_PERMS=[
+  {key:'canBook',           label:'Book a slot'},
+  {key:'canAddToOwnSlot',   label:'Add agencies to own slot'},
+  {key:'canViewOwn',        label:'View own booking details'},
+  {key:'canViewOthers',     label:'View others\' booking details'},
+  {key:'canMarkAttendance', label:'Mark attended / no-show'},
+  {key:'canCancel',         label:'Cancel bookings'},
+  {key:'canExport',         label:'Export CSV'},
+  {key:'canManageUsers',    label:'Manage users'},
+  {key:'canManageRoles',    label:'Manage roles & permissions'},
+  {key:'canManageEvents',   label:'Create & manage events'},
+  {key:'canManageSettings', label:'Manage event settings'},
+];
+
+// Default roles stored in Firebase under /roles
+var DEFAULT_ROLES={
+  superadmin:   {label:'Super Admin',   system:true, perms:{canBook:true,canAddToOwnSlot:true,canViewOwn:true,canViewOthers:true,canMarkAttendance:true,canCancel:true,canExport:true,canManageUsers:true,canManageRoles:true,canManageEvents:true,canManageSettings:true}},
+  admin:        {label:'Admin',         system:false,perms:{canBook:true,canAddToOwnSlot:true,canViewOwn:true,canViewOthers:true,canMarkAttendance:true,canCancel:false,canExport:false,canManageUsers:false,canManageRoles:false,canManageEvents:false,canManageSettings:false}},
+  sales:        {label:'Sales',         system:false,perms:{canBook:true,canAddToOwnSlot:true,canViewOwn:true,canViewOthers:false,canMarkAttendance:false,canCancel:false,canExport:false,canManageUsers:false,canManageRoles:false,canManageEvents:false,canManageSettings:false}},
+  operation:    {label:'Operation',     system:false,perms:{canBook:false,canAddToOwnSlot:false,canViewOwn:true,canViewOthers:true,canMarkAttendance:true,canCancel:false,canExport:true,canManageUsers:false,canManageRoles:false,canManageEvents:false,canManageSettings:false}},
+  art_director: {label:'Art Director',  system:false,perms:{canBook:false,canAddToOwnSlot:false,canViewOwn:true,canViewOthers:true,canMarkAttendance:false,canCancel:false,canExport:false,canManageUsers:false,canManageRoles:false,canManageEvents:false,canManageSettings:false}},
+  videographer: {label:'Videographer',  system:false,perms:{canBook:false,canAddToOwnSlot:false,canViewOwn:true,canViewOthers:true,canMarkAttendance:false,canCancel:false,canExport:false,canManageUsers:false,canManageRoles:false,canManageEvents:false,canManageSettings:false}},
 };
 
-function getProjectData(){
-  var name=document.getElementById('propName').value;
-  return PROJECTS[name]||PROJECTS['Vincitore Wellness Estate'];
-}
-function getHO_FIXED(){return getProjectData().hoFixed;}
-function getHO_DISPLAY(){return getProjectData().hoDisplay;}
-function getHO_DISPLAY_FULL(){return getProjectData().hoDisplayFull||getProjectData().hoDisplay;}
-function getInstDues(){
-  var proj=getProjectData();
-  var hoMo=getHOMonth();
-  var base=proj.dues||[1,6,12];
-  return [base[0],base[1],base[2],hoMo];
-}
+var DEFAULT_EVENT_CFG={
+  name:'SIP Launch — Agency Briefing',
+  startDate:'2026-05-04',endDate:'2026-05-09',
+  slotStart:'10:30',slotEnd:'18:30',slotDuration:60,
+  venues:[
+    {id:'v1',name:'Vincitore Sales Centre',capacity:50},
+    {id:'v2',name:'Vincitore Experience Centre – Benessere Arjan',capacity:50}
+  ]
+};
 
-function onProjectChange(){
-  var proj=getProjectData();
-  var sel=document.getElementById('unitType');
-  sel.innerHTML='';
-  proj.units.forEach(function(u){
-    var opt=document.createElement('option');
-    opt.value=u.price;
-    opt.textContent=u.price>0?u.label+' — AED '+u.price.toLocaleString():u.label;
-    sel.appendChild(opt);
-  });
-  document.getElementById('hoDisplay').textContent=proj.hoDisplayFull||proj.hoDisplay;
-  // Update due labels in slider table
-  var dues=getInstDues();
-  var lblIds=['due1lbl','due2lbl','due3lbl'];
-  dues.slice(0,3).forEach(function(d,i){
-    var el=document.getElementById(lblIds[i]);
-    if(el)el.textContent='Month '+d;
-  });
-  // Reset sliders to due dates for this project
-  var prevDues=[0].concat(dues.slice(0,3));
-  for(var i=1;i<=3;i++){
-    var sl=document.getElementById('sl'+i);
-    if(sl){sl.min=prevDues[i-1];sl.max=dues[i-1];sl.value=dues[i-1];}
-  }
-  var sl5=document.getElementById('sl5');
-  var hoMo=getHOMonth();
-  if(sl5){sl5.min=dues[2];sl5.max=hoMo;sl5.value=hoMo;}
-  onUnitChange();
-}
+// ── Logo ──────────────────────────────────────────────────────────
+document.getElementById('authLogo').src=LOGO;
+document.getElementById('topbarLogo').src=LOGO;
 
-function onUnitChange(){
-  var price=parseInt(document.getElementById('unitType').value)||0;
-  var pv=document.getElementById('propVal');
-  var isCustom=price===0;
-  pv.readOnly=!isCustom;
-  pv.style.background=isCustom?'transparent':'#faf7f0';
-  pv.style.color=isCustom?'#1a1a1a':'#8A6E25';
-  if(!isCustom) pv.value=price;
-  render();
-}
+// ── Init & Migration ──────────────────────────────────────────────
+async function init(){
+  // Connection timeout — if Firebase doesn't respond in 8 seconds show error
+  var connTimeout=setTimeout(function(){
+    if(document.getElementById('loginForm').style.display==='none'&&document.getElementById('connectingMsg').style.display!=='none'){
+      document.getElementById('connectingMsg').innerHTML='❌ Connection is taking too long.<br><small>Check your internet and <a href="" style="color:var(--gold)">refresh the page</a>.</small>';
+    }
+  },8000);
 
-var HO_FIXED = new Date(2029,6,1);   // kept for compatibility — overridden dynamically
-var HO_DISPLAY = 'Jun 2029';
+  try{
+    // Read only what we need — NOT the whole DB
+    await new Promise(r=>setTimeout(r,500));
 
-function fmt(n){return 'AED '+Math.round(n).toLocaleString();}
-function getM(i){var el=document.getElementById('sl'+i);return el?parseInt(el.value):0;}
-function getDPDate(){var v=document.getElementById('dpDate').value,p=v.split('-');return new Date(parseInt(p[0]),parseInt(p[1])-1,1);}
-function addMonths(d,n){return new Date(d.getFullYear(),d.getMonth()+n,1);}
-function fmtDate(d){return d.toLocaleDateString('en-GB',{month:'short',year:'numeric'});}
-function fmtDateLong(d){return d.toLocaleDateString('en-GB',{day:'2-digit',month:'long',year:'numeric'});}
-function monthsBetween(a,b){return(b.getFullYear()-a.getFullYear())*12+(b.getMonth()-a.getMonth());}
-function getHOMonth(){return monthsBetween(getDPDate(),getHO_FIXED());}
+    var usersSnap   = await DB.ref('/users').once('value');
+    var eventsSnap  = await DB.ref('/events').once('value');
+    var oldCfgSnap  = await DB.ref('/config').once('value');
+    var rolesSnap   = await DB.ref('/roles').once('value');
 
-function updateDueDates(){
-  var dp=getDPDate(), hoMo=getHOMonth(), dues=getInstDues();
-  document.getElementById('dpCalDate').textContent=fmtDate(dp);
-  document.getElementById('firstPayoutDate').textContent=fmtDate(addMonths(dp,3));
-  document.getElementById('roiWindow').textContent=fmtDate(addMonths(dp,1))+' – '+getHO_DISPLAY_FULL();
-  document.getElementById('handoverDisplay').textContent=getHO_DISPLAY_FULL();
-  // Update entry and first payout in bar
-  var pvEl=document.getElementById('propVal');
-  var pv=parseFloat(pvEl?pvEl.value:0)||0;
-  var entBar=document.getElementById('entryAmtBar');
-  if(entBar) entBar.textContent=pv?fmt(pv*0.14):'—';
-  var fpBar=document.getElementById('firstPayoutBar');
-  if(fpBar) fpBar.textContent=fmtDate(addMonths(dp,3));
-  var ids=['due1','due2','due3'];
-  dues.slice(0,3).forEach(function(d,i){
-    var el=document.getElementById(ids[i]);if(el)el.textContent=fmtDate(addMonths(dp,d));
-  });
-  // Set hodue text directly — always show full handover date (e.g. "30 Aug 2027")
-  var scenA=document.getElementById('togA').className.indexOf('on')>=0;
-  if(scenA){
-    document.getElementById('hodue').innerHTML='Pay any time before handover · <b>'+getHO_DISPLAY_FULL()+'</b> · earns ROI from payment date';
-  }else{
-    document.getElementById('hodue').innerHTML='Paid at actual handover ('+getHO_DISPLAY_FULL()+') · <b>No ROI on this amount</b>';
-  }
-  var sl5=document.getElementById('sl5');
-  sl5.min=dues[2];sl5.max=hoMo;
-  if(parseInt(sl5.value)>hoMo)sl5.value=hoMo;
-  if(parseInt(sl5.value)<dues[2])sl5.value=dues[2];
-}
+    var hasUsers     = usersSnap.exists();
+    var hasEvents    = eventsSnap.exists();
+    var hasOldConfig = oldCfgSnap.exists();
+    var hasRoles     = rolesSnap.exists();
 
-function onSlide(idx){
-  for(var i=idx+1;i<=4;i++){
-    var sl=document.getElementById('sl'+i);if(!sl||sl.disabled)continue;
-    var newMin=Math.min(getM(i-1),parseInt(sl.max));sl.min=newMin;
-    if(parseInt(sl.value)<newMin)sl.value=newMin;
-  }
-  updateLabels();render();
-}
-
-function updateLabels(){
-  var dp=getDPDate(),hoMo=getHOMonth(),dues=getInstDues();
-  // sliders: sl1=inst1, sl2=inst2, sl3=inst3, sl5=handover (sl4 removed)
-  var sliderMap=[{id:1,dueIdx:0},{id:2,dueIdx:1},{id:3,dueIdx:2},{id:5,dueIdx:3}];
-  sliderMap.forEach(function(s){
-    var sl=document.getElementById('sl'+s.id);if(!sl)return;
-    var m=parseInt(sl.value),due=dues[s.dueIdx]||hoMo,isEarly=m<due;
-    var el=document.getElementById('mv'+s.id);if(!el)return;
-    var dateLabel=(s.id===5&&m===hoMo)?getHO_DISPLAY_FULL():fmtDate(addMonths(dp,m));
-    el.textContent='Month '+m+' ('+dateLabel+')'+(isEarly?' ★':'');
-    el.className='mo-lbl '+(isEarly?'early':'due');
-  });
-}
-
-// ── CORE ENGINE ───────────────────────────────────────────────────────────────
-// Builds the quarterly payout schedule with pro-rata first payout
-function computePayouts(pv, scenA){
-  var dp=getDPDate(), hoMo=getHOMonth();
-  var instCount=scenA?4:3;
-  var instAmts=[pv*.10,pv*.20,pv*.20,pv*.40];
-  var dpAmt=pv*.10;
-  var instDues=getInstDues();
-  var payMonths=[];
-  for(var i=1;i<=instCount;i++)payMonths.push(getM(i));
-
-  // DP NEVER earns ROI — even if 100% upfront, base = 90% only (installments)
-  // dpEarns flag still used to show the info note, but dpAmt is never added to base
-  var dpEarns=true;
-  for(var di=0;di<instCount;di++){if(payMonths[di]!==0){dpEarns=false;break;}}
-
-  // Build sorted payment event list — installments only (90%), DP excluded from base
-  var byMonth={};
-  for(var j=0;j<instCount;j++){var mo=payMonths[j];byMonth[mo]=(byMonth[mo]||0)+instAmts[j];}
-  var sortedMos=Object.keys(byMonth).map(Number).sort(function(a,b){return a-b;});
-  var cum=0, timeline=[];
-  sortedMos.forEach(function(mo){cum+=byMonth[mo];timeline.push({month:mo,base:cum});});
-
-  // Helper: get cumulative base at or before a given month
-  function baseAt(mo){
-    var b=0;
-    for(var t=0;t<timeline.length;t++){if(timeline[t].month<=mo)b=timeline[t].base;}
-    return b;
-  }
-
-  // Generate payout dates: M3, M6, M9, ... last FULL quarter before or at hoMo
-  var payoutDates=[];
-  for(var m=3;m<=hoMo;m+=3) payoutDates.push(m);
-
-  var payouts=[];
-  var prevDate=0; // period starts from M0
-
-  payoutDates.forEach(function(pd){
-    var eventsInPeriod=timeline.filter(function(e){return e.month>prevDate && e.month<pd;});
-    var periodROI=0;
-    var baseAtPeriodStart=baseAt(prevDate);
-    var curBase=baseAtPeriodStart;
-    var curFrom=prevDate;
-
-    if(curBase===0 && eventsInPeriod.length>0){
-      curBase=eventsInPeriod[0].base;
-      curFrom=eventsInPeriod[0].month;
-      eventsInPeriod=eventsInPeriod.slice(1);
+    // Seed roles only if completely missing
+    if(!hasRoles){
+      await DB.ref('/roles').set(DEFAULT_ROLES);
+    }else{
+      // Add new roles if missing (art_director, videographer)
+      var existingRoles=rolesSnap.val()||{};
+      var updates={};
+      if(!existingRoles.art_director) updates['/roles/art_director']=DEFAULT_ROLES.art_director;
+      if(!existingRoles.videographer)  updates['/roles/videographer']=DEFAULT_ROLES.videographer;
+      if(Object.keys(updates).length) await DB.ref().update(updates);
     }
 
-    eventsInPeriod.forEach(function(e){
-      if(curBase>0 && e.month>curFrom){periodROI+=curBase*0.08*(e.month-curFrom)/12;}
-      curBase=e.base;curFrom=e.month;
-    });
+    // Migrate v1 → v2 only if old config exists AND no events yet
+    if(hasOldConfig&&!hasEvents){
+      var c=oldCfgSnap.val();
+      var bks=(await DB.ref('/bookings').once('value')).val()||{};
+      var eid='event_'+Date.now();
+      var migratedCfg={...DEFAULT_EVENT_CFG,
+        name:c.eventName||DEFAULT_EVENT_CFG.name,
+        startDate:c.startDate||DEFAULT_EVENT_CFG.startDate,
+        endDate:c.endDate||DEFAULT_EVENT_CFG.endDate,
+        slotStart:c.slotStart||DEFAULT_EVENT_CFG.slotStart,
+        slotEnd:c.slotEnd||DEFAULT_EVENT_CFG.slotEnd,
+        slotDuration:c.slotDuration||60,
+        venues:c.venues||DEFAULT_EVENT_CFG.venues
+      };
+      await DB.ref('/events/'+eid+'/config').set(migratedCfg);
+      if(Object.keys(bks).length) await DB.ref('/events/'+eid+'/bookings').set(bks);
+      await DB.ref('/events_meta/'+eid).set({name:migratedCfg.name,createdAt:new Date().toISOString()});
+      await DB.ref('/active_event').set(eid);
+      await DB.ref('/config').remove();
+      await DB.ref('/bookings').remove();
+    }
 
-    if(curBase>0 && pd>curFrom){periodROI+=curBase*0.08*(pd-curFrom)/12;}
+    // Create first event only if NO events exist AND no old config
+    if(!hasEvents&&!hasOldConfig){
+      var eid2='event_'+Date.now();
+      await DB.ref('/events/'+eid2+'/config').set(DEFAULT_EVENT_CFG);
+      await DB.ref('/events_meta/'+eid2).set({name:DEFAULT_EVENT_CFG.name,createdAt:new Date().toISOString()});
+      await DB.ref('/active_event').set(eid2);
+    }
 
-    var effectiveDuration=pd-prevDate;
-    var isProRata=false;
-    var effectiveCalFrom=fmtDate(addMonths(dp,prevDate));
-    if(prevDate===0){
-      var firstPaymentMonth=timeline.length>0?timeline[0].month:0;
-      if(firstPaymentMonth>0){
-        isProRata=true;
-        effectiveDuration=pd-firstPaymentMonth;
-        effectiveCalFrom=fmtDate(addMonths(dp,firstPaymentMonth));
+    // Seed default users only if completely absent
+    if(!hasUsers){
+      var defUsers={
+        u1:{id:'u1',username:'superadmin',password:'Vincitore@2026',name:'Super Admin',role:'superadmin'},
+        u2:{id:'u2',username:'admin',password:'Admin@2026',name:'Admin',role:'admin'},
+        u3:{id:'u3',username:'sales1',password:'Sales@2026',name:'Sales Rep 1',role:'sales'},
+      };
+      await DB.ref('/users').set(defUsers);
+    }
+
+    startListeners();
+    clearTimeout(connTimeout);
+    document.getElementById('connectingMsg').style.display='none';
+
+    // Restore session on refresh
+    setTimeout(function(){
+      var savedId=localStorage.getItem('vp_session');
+      if(savedId&&CACHE.users[savedId]){
+        var user=CACHE.users[savedId];
+        CU=user;
+        document.getElementById('authScreen').style.display='none';
+        document.getElementById('app').style.cssText='display:flex;flex-direction:column';
+        document.getElementById('topbarUser').textContent=user.name;
+        document.getElementById('topbarRole').textContent=(roles()[user.role]||{}).label||user.role;
+        buildSidebar();buildEventSwitcher();navigate(getDefaultPage());
+      }else{
+        document.getElementById('loginForm').style.display='block';
       }
-    }
+    },800);
 
-    if(periodROI>0){
-      payouts.push({
-        num       : payouts.length+1,
-        payDate   : pd,
-        calDate   : fmtDate(addMonths(dp,pd)),
-        periodFrom: prevDate,
-        periodTo  : pd,
-        calFrom   : effectiveCalFrom,
-        calTo     : fmtDate(addMonths(dp,pd)),
-        baseAtEnd : baseAt(pd-1)||curBase,
-        duration  : effectiveDuration,
-        amount    : periodROI,
-        isProRata : isProRata,
-        isFinal   : false,
-      });
-    }
-    prevDate=pd;
-  });
-
-  // ── FINAL PRO-RATED PAYOUT AT HANDOVER ──────────────────────────────────────
-  // If hoMo is not exactly divisible by 3, there are remaining months after
-  // the last full quarterly payout — pay these out pro-rated at handover
-  var lastFullQ = payoutDates.length>0 ? payoutDates[payoutDates.length-1] : 0;
-  var remainder = hoMo - lastFullQ;
-  if(remainder > 0){
-    // Calculate ROI for the remainder period
-    var remEvents=timeline.filter(function(e){return e.month>lastFullQ && e.month<=hoMo;});
-    var remROI=0;
-    var remBase=baseAt(lastFullQ);
-    var remFrom=lastFullQ;
-
-    remEvents.forEach(function(e){
-      if(remBase>0 && e.month>remFrom){remROI+=remBase*0.08*(e.month-remFrom)/12;}
-      remBase=e.base;remFrom=e.month;
-    });
-    if(remBase>0 && hoMo>remFrom){remROI+=remBase*0.08*(hoMo-remFrom)/12;}
-
-    if(remROI>0){
-      payouts.push({
-        num       : payouts.length+1,
-        payDate   : hoMo,
-        calDate   : getHO_DISPLAY(),
-        periodFrom: lastFullQ,
-        periodTo  : hoMo,
-        calFrom   : fmtDate(addMonths(dp,lastFullQ)),
-        calTo     : getHO_DISPLAY(),
-        baseAtEnd : baseAt(hoMo)||remBase,
-        duration  : remainder,
-        amount    : remROI,
-        isProRata : true,
-        isFinal   : true,
-      });
-    }
+  }catch(e){
+    clearTimeout(connTimeout);
+    document.getElementById('connectingMsg').innerHTML='❌ Error: '+e.message+'<br><small><a href="" style="color:var(--gold)">Refresh to try again</a></small>';
+    console.error('Init error:', e);
   }
-
-  var totalROI=payouts.reduce(function(s,p){return s+p.amount;},0);
-  return{payouts:payouts, totalROI:totalROI, dpEarns:dpEarns, hoMo:hoMo};
 }
 
-function render(){
-  var pv=parseFloat(document.getElementById('propVal').value);
-  updateDueDates();updateLabels();
-  if(!pv||pv<=0){
-    document.getElementById('resultsArea').style.display='none';
-    document.getElementById('emptyState').style.display='block';
-    document.getElementById('entryAmt').textContent='—';
+function startListeners(){
+  DB.ref('/users').on('value',s=>{CACHE.users=s.val()||{};if(CU)rerender();});
+  DB.ref('/video_bookings').on('value',s=>{CACHE.videoBookings=s.exists()?s.val():{};if(CU&&PAGE==='videoshoots')renderVideoShoots();});
+  DB.ref('/events_meta').on('value',s=>{CACHE.eventsMeta=s.val()||{};if(CU)buildEventSwitcher();});
+  DB.ref('/roles').on('value',s=>{CACHE.roles=s.val()||DEFAULT_ROLES;if(CU)rerender();});
+  DB.ref('/active_event').on('value',s=>{
+    ACTIVE_EID=s.val();
+    DB.ref('/events/'+ACTIVE_EID+'/config').on('value',c=>{
+      CACHE.cfg=c.val();
+      if(CU){
+        var n=CACHE.cfg?CACHE.cfg.name:'Portal';
+        document.getElementById('topbarEventName').textContent=n;
+        buildEventSwitcher();rerender();
+      }
+    });
+    DB.ref('/events/'+ACTIVE_EID+'/bookings').on('value',b=>{CACHE.bookings=b.val()||{};if(CU)rerender();});
+  });
+}
+
+init();
+
+// ── Helpers ───────────────────────────────────────────────────────
+function uid(){return'b'+Date.now()+Math.random().toString(36).substr(2,5);}
+function pad(n){return n<10?'0'+n:''+n;}
+function cfg(){return CACHE.cfg||{};}
+function roles(){return CACHE.roles||DEFAULT_ROLES;}
+function myRole(){if(!CU)return{};return roles()[CU.role]||{label:CU.role,perms:{}};}
+function can(perm){if(!CU)return false;return !!(myRole().perms||{})[perm];}
+
+function getDays(){
+  if(!cfg().startDate)return[];
+  var days=[],d=new Date(cfg().startDate+'T00:00:00');
+  var end=new Date(cfg().endDate+'T00:00:00');
+  while(d<=end){
+    var y=d.getFullYear(),mo=d.getMonth()+1,dy=d.getDate();
+    days.push(y+'-'+pad(mo)+'-'+pad(dy));d.setDate(d.getDate()+1);
+  }
+  return days;
+}
+function getSlots(){
+  if(!cfg().slotStart)return[];
+  var slots=[];
+  var[sh,sm]=cfg().slotStart.split(':').map(Number);
+  var[eh,em]=cfg().slotEnd.split(':').map(Number);
+  var cur=sh*60+sm,endM=eh*60+em,dur=parseInt(cfg().slotDuration)||60;
+  while(cur+dur<=endM){
+    var h1=Math.floor(cur/60),m1=cur%60,h2=Math.floor((cur+dur)/60),m2=(cur+dur)%60;
+    var f=h=>h%12===0?12:h%12,a=h=>h<12?'AM':'PM';
+    slots.push({key:pad(h1)+':'+pad(m1),label:f(h1)+':'+pad(m1)+a(h1)+' – '+f(h2)+':'+pad(m2)+a(h2)});
+    cur+=dur;
+  }
+  return slots;
+}
+function fmtDate(s){return new Date(s+'T00:00:00').toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'});}
+function fmtDT(s){if(!s)return'—';var d=new Date(s);return d.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'})+' '+d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});}
+function getVenue(id){return(cfg().venues||[]).find(v=>v.id===id);}
+function getUser(id){return CACHE.users[id];}
+function allBk(){return Object.values(CACHE.bookings);}
+function activeBk(){return allBk().filter(b=>b.status!=='cancelled');}
+function slotBk(vid,date,sk){return activeBk().filter(b=>b.venueId===vid&&b.date===date&&b.slotKey===sk);}
+// Who owns a slot (first booker's userId, or null)
+function slotOwner(vid,date,sk){var bks=slotBk(vid,date,sk);return bks.length?bks[0].bookedBy:null;}
+function slotPax(vid,date,sk){return slotBk(vid,date,sk).reduce((s,b)=>s+parseInt(b.attendees||1),0);}
+function showSaved(){var el=document.getElementById('saveInd');if(el){el.style.opacity='1';setTimeout(()=>el.style.opacity='0',1500);}}
+function rerender(){var p={dashboard:renderDashboard,calendar:renderCalendar,mybookings:renderMyBookings,allbookings:renderAllBookings,agencies:renderAgencies,users:renderUsers,roles:renderRoles,events:renderEvents,config:renderConfig,videoshoots:renderVideoShoots};if(p[PAGE])p[PAGE]();}
+
+function getDefaultPage(){
+  if(CU.role==='art_director'||CU.role==='videographer') return 'videoshoots';
+  return 'dashboard';
+}
+
+// ── Auth ──────────────────────────────────────────────────────────
+function doLogin(){
+  var u=document.getElementById('loginUser').value.trim();
+  var p=document.getElementById('loginPass').value;
+  var user=Object.values(CACHE.users).find(x=>x.username===u&&x.password===p);
+  if(!user){document.getElementById('authError').style.display='block';return;}
+  document.getElementById('authError').style.display='none';
+  CU=user;
+  localStorage.setItem('vp_session', user.id);
+  document.getElementById('authScreen').style.display='none';
+  document.getElementById('app').style.cssText='display:flex;flex-direction:column';
+  document.getElementById('topbarUser').textContent=user.name;
+  document.getElementById('topbarRole').textContent=(roles()[user.role]||{}).label||user.role;
+  buildSidebar();buildEventSwitcher();navigate('dashboard');
+}
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&document.getElementById('loginForm').style.display!=='none')doLogin();});
+function doLogout(){CU=null;localStorage.removeItem('vp_session');document.getElementById('app').style.display='none';document.getElementById('authScreen').style.display='flex';document.getElementById('loginPass').value='';document.getElementById('loginUser').value='';}
+
+// ── Event switcher ─────────────────────────────────────────────────
+function buildEventSwitcher(){
+  if(!CU||!can('canManageEvents'))return;
+  var sel=document.getElementById('eventSwitcher');
+  sel.style.display='block';sel.innerHTML='';
+  Object.entries(CACHE.eventsMeta).forEach(([eid,meta])=>{
+    var o=document.createElement('option');
+    o.value=eid;o.textContent=meta.name;
+    if(eid===ACTIVE_EID)o.selected=true;
+    sel.appendChild(o);
+  });
+}
+function switchEvent(eid){if(eid!==ACTIVE_EID)DB.ref('/active_event').set(eid);}
+
+// ── Nav ───────────────────────────────────────────────────────────
+function buildSidebar(){
+  var isCreative=CU.role==='art_director'||CU.role==='videographer';
+  var items=[
+    {id:'dashboard',   icon:'📊',label:'Dashboard',        show:!isCreative},
+    {id:'videoshoots', icon:'🎬',label:'Video Shoots',      show:true},
+    {id:'calendar',    icon:'📅',label:'Booking Calendar',  show:!isCreative&&can('canBook')},
+    {id:'mybookings',  icon:'📋',label:'My Bookings',       show:!isCreative&&!can('canViewOthers')},
+    {id:'allbookings', icon:'📋',label:'All Bookings',      show:!isCreative&&can('canViewOthers')},
+    {id:'agencies',    icon:'🏢',label:'Agencies',          show:!isCreative&&can('canViewOthers')},
+    {id:'users',       icon:'👥',label:'Users',             show:can('canManageUsers')},
+    {id:'roles',       icon:'🔐',label:'Roles & Access',    show:can('canManageRoles')},
+    {id:'events',      icon:'🗓',label:'Events',            show:can('canManageEvents')},
+    {id:'config',      icon:'⚙️',label:'Settings',         show:can('canManageSettings')},
+  ];
+  var html='<div class="nav-sep">Navigation</div>';
+  items.filter(i=>i.show).forEach(i=>{
+    html+=`<div class="nav-item" id="nav-${i.id}" onclick="navigate('${i.id}')">${i.icon} ${i.label}</div>`;
+  });
+  document.getElementById('sidebar').innerHTML=html;
+}
+// ── Sidebar toggle (mobile) ───────────────────────────────────────
+function toggleSidebar(){
+  var sb=document.getElementById('sidebar');
+  var ov=document.getElementById('sidebarOverlay');
+  sb.classList.toggle('open');
+  ov.classList.toggle('open');
+}
+// Close sidebar on nav click (mobile)
+function navigate(page){
+  PAGE=page;
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  var nav=document.getElementById('nav-'+page);if(nav)nav.classList.add('active');
+  // Close mobile sidebar
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebarOverlay').classList.remove('open');
+  rerender();
+}
+
+// ── Dashboard ─────────────────────────────────────────────────────
+function renderDashboard(){
+  var active=activeBk(),mine=active.filter(b=>b.bookedBy===CU.id);
+  var days=getDays(),slots=getSlots();
+  var html=`<div class="page-header"><div class="ph-row">
+    <div><div class="page-title">Dashboard</div>
+    <div class="page-sub">${cfg().name||'—'} · ${fmtDate(cfg().startDate||'')} – ${fmtDate(cfg().endDate||'')}</div></div>
+    <div class="actions">${can('canBook')?'<button class="btn btn-gold" onclick="navigate(\'calendar\')">📅 Book a Slot</button>':''}</div>
+  </div></div>`;
+
+  if(!can('canViewOthers')){
+    html+=`<div class="g4" style="margin-bottom:1.25rem">
+      <div class="stat"><div class="stat-n">${mine.length}</div><div class="stat-l">My Bookings</div></div>
+      <div class="stat"><div class="stat-n">${mine.reduce((s,b)=>s+parseInt(b.attendees||1),0)}</div><div class="stat-l">My Pax</div></div>
+      <div class="stat"><div class="stat-n">${mine.filter(b=>b.status==='attended').length}</div><div class="stat-l">Attended</div></div>
+      <div class="stat"><div class="stat-n">${mine.filter(b=>b.status==='confirmed').length}</div><div class="stat-l">Upcoming</div></div>
+    </div>`;
+  }else{
+    var totalPax=active.reduce((s,b)=>s+parseInt(b.attendees||1),0);
+    html+=`<div class="g4" style="margin-bottom:1.25rem">
+      <div class="stat"><div class="stat-n">${active.length}</div><div class="stat-l">Total Bookings</div></div>
+      <div class="stat"><div class="stat-n">${totalPax}</div><div class="stat-l">Total Pax</div></div>
+      <div class="stat"><div class="stat-n">${active.filter(b=>b.status==='attended').length}</div><div class="stat-l">Attended</div></div>
+      <div class="stat"><div class="stat-n">${[...new Set(active.map(b=>b.agencyName))].length}</div><div class="stat-l">Agencies</div></div>
+    </div>`;
+  }
+
+  html+='<div class="g2" style="margin-bottom:1.25rem">';
+  (cfg().venues||[]).forEach(v=>{
+    var vb=active.filter(b=>b.venueId===v.id);
+    var totalSlots=slots.length*days.length;
+    // Count unique slots claimed
+    var claimedSlots=[...new Set(vb.map(b=>b.date+'|'+b.slotKey))].length;
+    var pct=totalSlots>0?Math.round(claimedSlots/totalSlots*100):0;
+    var fillC=pct>80?'#ef9a9a':pct>50?'#ffe082':'#B8973A';
+    html+=`<div class="card">
+      <div class="card-title">🏢 ${v.name}</div>
+      <div style="font-size:22px;font-weight:700;color:var(--gold);margin-bottom:4px">${claimedSlots} / ${totalSlots} slots claimed</div>
+      <div style="height:8px;background:var(--border);border-radius:4px;overflow:hidden;margin:6px 0">
+        <div style="height:100%;width:${pct}%;background:${fillC};border-radius:4px"></div>
+      </div>
+      <div style="font-size:11px;color:var(--muted)">${pct}% utilised · ${vb.reduce((s,b)=>s+parseInt(b.attendees||1),0)} total pax · ${v.capacity} pax/slot</div>
+    </div>`;
+  });
+  html+='</div>';
+
+  var upcoming=(can('canViewOthers')?active:mine).filter(b=>b.status==='confirmed').slice(0,6);
+  html+=`<div class="card"><div class="card-title">📋 Upcoming Bookings
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-left:auto">
+      <select id="db_filter_date" onchange="applyDashFilters()" style="font-size:12px;padding:4px 8px;border:1px solid var(--border);border-radius:6px;color:var(--text)">
+        <option value="">All dates</option>
+        ${getDays().map(d=>`<option value="${d}">${fmtDate(d)}</option>`).join('')}
+      </select>
+      <select id="db_filter_venue" onchange="applyDashFilters()" style="font-size:12px;padding:4px 8px;border:1px solid var(--border);border-radius:6px;color:var(--text)">
+        <option value="">All venues</option>
+        ${(cfg().venues||[]).map(v=>`<option value="${v.id}">${v.name.split('–')[0].trim()}</option>`).join('')}
+      </select>
+      <select id="db_filter_slot" onchange="applyDashFilters()" style="font-size:12px;padding:4px 8px;border:1px solid var(--border);border-radius:6px;color:var(--text)">
+        <option value="">All slots</option>
+        ${getSlots().map(s=>`<option value="${s.key}">${s.label}</option>`).join('')}
+      </select>
+    </div>
+  </div>
+  <div id="dashBkTable">${buildDashBkTable(upcoming)}</div>
+  </div>`;
+  if(can('canViewOthers')){
+    html+=`<div class="card" style="margin-top:1rem"><div class="card-title">👥 Rep Performance</div>
+      <table class="tbl"><thead><tr><th>Name</th><th>Role</th><th>Bookings</th><th>Pax</th><th>Attended</th><th>No-show</th></tr></thead><tbody>`;
+    Object.values(CACHE.users).filter(u=>u.id!==CU.id).forEach(u=>{
+      var ub=active.filter(b=>b.bookedBy===u.id);
+      if(!ub.length)return;
+      html+=`<tr><td><strong>${u.name}</strong></td>
+        <td style="font-size:11px;color:var(--muted)">${(roles()[u.role]||{}).label||u.role}</td>
+        <td>${ub.length}</td><td>${ub.reduce((s,b)=>s+parseInt(b.attendees||1),0)}</td>
+        <td>${ub.filter(b=>b.status==='attended').length}</td>
+        <td>${ub.filter(b=>b.status==='noshow').length}</td></tr>`;
+    });
+    html+='</tbody></table></div>';
+  }
+  document.getElementById('content').innerHTML=html;
+}
+
+function buildDashBkTable(bks){
+  if(!bks.length) return'<div class="empty"><div class="ei">📅</div><p>No bookings match the selected filters</p></div>';
+  var html=`<table class="tbl"><thead><tr><th>Date</th><th>Slot</th><th>Venue</th><th>Agency</th>${can('canViewOthers')?'<th>Booked By</th>':''}<th>Registered</th><th>Attended</th><th></th></tr></thead><tbody>`;
+  bks.forEach(b=>{
+    var v=getVenue(b.venueId),s=getSlots().find(x=>x.key===b.slotKey),rep=getUser(b.bookedBy);
+    html+=`<tr>
+      <td>${fmtDate(b.date)}</td>
+      <td style="font-size:11px">${s?s.label:'—'}</td>
+      <td style="font-size:11px">${v?v.name.split('–')[0].trim():'—'}</td>
+      <td><strong>${b.agencyName}</strong></td>
+      ${can('canViewOthers')?`<td style="font-size:12px">${rep?rep.name:'—'}</td>`:''}
+      <td>${b.attendees}</td>
+      <td>${b.status==='attended'&&b.paxAttended!==undefined?`<span style="color:var(--green);font-weight:600">${b.paxAttended}</span>`:'<span style="color:var(--muted)">—</span>'}</td>
+      <td><button class="btn btn-outline btn-xs" onclick="viewBk('${b.id}')">View</button></td>
+    </tr>`;
+  });
+  return html+'</tbody></table>';
+}
+
+function applyDashFilters(){
+  var dateF=document.getElementById('db_filter_date')?document.getElementById('db_filter_date').value:'';
+  var venueF=document.getElementById('db_filter_venue')?document.getElementById('db_filter_venue').value:'';
+  var slotF=document.getElementById('db_filter_slot')?document.getElementById('db_filter_slot').value:'';
+  var active=activeBk();
+  var base=can('canViewOthers')?active:active.filter(b=>b.bookedBy===CU.id);
+  var filtered=base.filter(b=>{
+    if(dateF&&b.date!==dateF) return false;
+    if(venueF&&b.venueId!==venueF) return false;
+    if(slotF&&b.slotKey!==slotF) return false;
+    return true;
+  }).sort((a,b)=>a.date>b.date?1:-1);
+  var el=document.getElementById('dashBkTable');
+  if(el) el.innerHTML=buildDashBkTable(filtered);
+}
+
+// ── Calendar ──────────────────────────────────────────────────────
+function renderCalendar(){
+  var days=getDays(),slots=getSlots(),venues=cfg().venues||[];
+  if(!venues.length){document.getElementById('content').innerHTML='<div class="empty"><div class="ei">⚙️</div><p>No venues configured</p></div>';return;}
+  var venue=venues[VENUE_IDX]||venues[0];
+
+  var html=`<div class="page-header"><div class="ph-row">
+    <div><div class="page-title">📅 Booking Calendar</div>
+    <div class="page-sub">Each slot is exclusive to one sales rep · ${days.length} days · ${slots.length} slots/day · ${venue.capacity} pax/slot</div></div>
+  </div></div>
+  <div class="venue-tabs">`;
+  venues.forEach((v,i)=>{
+    var cn=[...new Set(activeBk().filter(b=>b.venueId===v.id).map(b=>b.date+'|'+b.slotKey))].length;
+    html+=`<div class="venue-tab${VENUE_IDX===i?' active':''}" onclick="switchVenue(${i})">🏢 ${v.name} <span style="font-size:11px;color:var(--muted)">${cn} slots claimed</span></div>`;
+  });
+  html+=`</div>
+  <div style="display:flex;gap:14px;margin-bottom:1rem;font-size:12px;flex-wrap:wrap">
+    <span style="color:var(--green)">🟢 Available</span>
+    <span style="color:var(--blue)">🟦 Your slot</span>
+    <span style="color:var(--red)">🔴 Taken by another rep</span>
+    <span style="color:var(--orange)">🟡 Full (50 pax)</span>
+  </div>
+  <div class="cal-wrap"><table class="cal-tbl"><thead><tr><th class="slot-th">Time Slot</th>`;
+  days.forEach(d=>{html+=`<th>${fmtDate(d)}</th>`;});
+  html+='</tr></thead><tbody>';
+
+  slots.forEach(slot=>{
+    html+=`<tr><td><div class="slot-lbl">${slot.label}</div></td>`;
+    days.forEach(date=>{
+      var bks=slotBk(venue.id,date,slot.key);
+      var owner=slotOwner(venue.id,date,slot.key);
+      var isMine=owner===CU.id;
+      var isOther=owner&&owner!==CU.id;
+      var isEmpty=!owner;
+      var pax=slotPax(venue.id,date,slot.key);
+      var cap=venue.capacity;
+      var isFull=pax>=cap;
+      var pct=Math.min(100,Math.round(pax/cap*100));
+      var fillC=isFull?'#ef9a9a':pct>60?'#ffe082':'#a5d6a7';
+
+      html+=`<td>`;
+      if(isEmpty&&can('canBook')){
+        // Available
+        html+=`<div class="sc sc-avail" onclick="openBook('${venue.id}','${date}','${slot.key}')">
+          <div class="sc-status" style="color:var(--green)">🟢 Available</div>
+          <div class="add-btn">+ Book this slot</div>
+        </div>`;
+      }else if(isMine){
+        // My slot — show all my bookings + option to add more if not full
+        var myBks=bks.filter(b=>b.bookedBy===CU.id);
+        html+=`<div class="sc sc-mine">
+          <div class="sc-status" style="color:var(--blue)">${isFull?'🟡 Your slot (full)':'🟦 Your slot'}</div>`;
+        myBks.forEach(b=>{
+          html+=`<div class="bk-chip bk-chip-mine" onclick="viewBk('${b.id}')">🏢 ${b.agencyName.length>16?b.agencyName.substring(0,15)+'…':b.agencyName} (${b.attendees})</div>`;
+        });
+        if(!isFull&&can('canAddToOwnSlot')){
+          html+=`<div class="add-btn" onclick="openAddToSlot('${venue.id}','${date}','${slot.key}')">+ Add agency</div>`;
+        }        html+=`<div class="pax-bar"><div class="pax-fill" style="width:${pct}%;background:${fillC}"></div></div>`;
+        html+=`<div style="font-size:10px;color:var(--muted);margin-top:2px">${pax}/${cap} pax</div>`;
+        html+='</div>';
+      }else if(isOther){
+        // Taken by another rep
+        var ownerUser=getUser(owner);
+        html+=`<div class="sc sc-other" ${can('canViewOthers')?`onclick="viewBk('${bks[0].id}')"`:''}>
+          <div class="sc-status" style="color:var(--red)">🔴 Slot taken</div>`;
+        if(can('canViewOthers')){
+          bks.forEach(b=>{
+            html+=`<div class="bk-chip bk-chip-other" onclick="event.stopPropagation();viewBk('${b.id}')">🏢 ${b.agencyName.length>16?b.agencyName.substring(0,15)+'…':b.agencyName} (${b.attendees})</div>`;
+          });
+          html+=`<div style="font-size:10px;color:var(--muted);margin-top:3px">By: ${ownerUser?ownerUser.name:'—'} · ${pax}/${cap} pax</div>`;
+          if(!isFull&&can('canAddToOwnSlot')){
+            html+=`<div class="add-btn" onclick="event.stopPropagation();openAddToSlot('${venue.id}','${date}','${slot.key}')">+ Add agency for ${ownerUser?ownerUser.name:'rep'}</div>`;
+          }
+        }else{
+          html+=`<div class="bk-chip bk-chip-masked">${pax} pax booked</div>`;
+        }
+        html+='</div>';
+      }else{
+        html+=`<div class="sc sc-full"><div class="sc-status" style="color:var(--muted)">—</div></div>`;
+      }
+      html+=`</td>`;
+    });
+    html+='</tr>';
+  });
+  html+='</tbody></table></div>';
+  document.getElementById('content').innerHTML=html;
+}
+function switchVenue(i){VENUE_IDX=i;renderCalendar();}
+
+// ── Book modal (first booking on a slot) ──────────────────────────
+// ── Phone validation ──────────────────────────────────────────────
+// Accepts: +[country_code]-[number]  e.g. +971-509082142
+// Rules: country code 1-3 digits, number 5-12 digits, digits only in each part
+function phoneHTML(){
+  return `<div class="fg">
+    <label class="req">Phone Number</label>
+    <div class="phone-wrap">
+      <span class="phone-cc">+</span>
+      <input type="text" id="f_cc" placeholder="971" maxlength="4"
+        style="width:64px;border:none;background:var(--egold);font-weight:600;color:var(--dgold);padding:9px 6px;outline:none;text-align:center"
+        oninput="this.value=this.value.replace(/[^0-9]/g,'');validatePhone()">
+      <span style="padding:9px 4px;color:var(--border);font-size:18px;line-height:1;background:var(--egold)">-</span>
+      <input type="tel" id="f_phone" placeholder="509082142" class="phone-num"
+        oninput="this.value=this.value.replace(/[^0-9]/g,'');validatePhone()">
+    </div>
+    <div class="phone-err" id="phoneErr">Enter country code (e.g. 971) and number (7–12 digits)</div>
+    <div class="hint">Format: +[country code]-[number] &nbsp;·&nbsp; e.g. +971-509082142</div>
+  </div>`;
+}
+
+function validatePhone(){
+  var cc=document.getElementById('f_cc');
+  var ph=document.getElementById('f_phone');
+  var err=document.getElementById('phoneErr');
+  if(!cc||!ph||!err)return true;
+  var ccv=cc.value.trim(), phv=ph.value.trim();
+  var wrap=cc.closest('.phone-wrap');
+  var ok=ccv.length>=1&&ccv.length<=4&&phv.length>=7&&phv.length<=12;
+  if(wrap) wrap.style.borderColor=(!ccv&&!phv)?'var(--border)':ok?'var(--green)':'var(--red)';
+  err.style.display=(!ccv&&!phv)||ok?'none':'block';
+  return ok;
+}
+
+function getPhoneValue(){
+  var cc=(document.getElementById('f_cc')||{}).value||'';
+  var ph=(document.getElementById('f_phone')||{}).value||'';
+  return cc&&ph?'+'+cc+'-'+ph:'';
+}
+
+// ── "Book on behalf of" dropdown ─────────────────────────────────
+// lockedUserId: if set, the field is read-only (slot already has an owner)
+function behalfHTML(lockedUserId){
+  if(!can('canViewOthers')) return ''; // sales users don't see this at all
+
+  if(lockedUserId){
+    // Slot already owned — lock to that user, no choice allowed
+    var lockedUser = getUser(lockedUserId);
+    var lockedName = lockedUser ? lockedUser.name : '—';
+    return `<div class="fg" style="margin-bottom:1rem">
+      <label>Booking attributed to</label>
+      <div style="padding:9px 12px;background:var(--egold);border:1.5px solid var(--gold);border-radius:8px;font-weight:600;color:var(--dgold);font-size:13px">
+        🔒 ${lockedName}
+        <input type="hidden" id="f_behalf" value="${lockedUserId}">
+      </div>
+      <div class="hint" style="color:var(--orange)">⚠️ Slot is already claimed by ${lockedName} — all bookings on this slot must be attributed to them</div>
+    </div>`;
+  }
+
+  // Free slot — show full dropdown
+  var salesUsers = Object.values(CACHE.users).filter(u=>u.id!==CU.id);
+  if(!salesUsers.length) return '';
+  var opts = salesUsers.map(u=>`<option value="${u.id}">${u.name} (${(roles()[u.role]||{}).label||u.role})</option>`).join('');
+  return `<div class="fg" style="margin-bottom:1rem">
+    <label>Book on behalf of</label>
+    <select id="f_behalf">
+      <option value="">— Myself (${CU.name}) —</option>
+      ${opts}
+    </select>
+    <div class="hint">The selected rep will own this slot — future additions must be by the same rep</div>
+  </div>`;
+}
+
+function getBehalfId(){
+  var el = document.getElementById('f_behalf');
+  return el && el.value ? el.value : CU.id;
+}
+
+// ── Book modal (first booking on a slot) ──────────────────────────
+function openBook(venueId,date,slotKey){
+  if(!can('canBook')){alert('You do not have permission to book slots.');return;}
+  var owner = slotOwner(venueId,date,slotKey);
+  if(owner){
+    // Slot already has an owner
+    if(owner===CU.id || can('canViewOthers')){
+      openAddToSlot(venueId,date,slotKey);
+    } else {
+      alert('This slot was just booked by another rep. Please choose a different slot.');
+      renderCalendar();
+    }
     return;
   }
-  document.getElementById('resultsArea').style.display='block';
-  document.getElementById('emptyState').style.display='none';
-  document.getElementById('entryAmt').textContent=fmt(pv*.14);
-
-  var scenA=(document.getElementById('togA').className.indexOf('on')>=0);
-  var R=computePayouts(pv,scenA);
-  var Ro=computePayouts(pv,!scenA);
-  var dp=getDPDate();
-
-  document.getElementById('dpNote').style.display=R.dpEarns?'block':'none';
-  document.getElementById('totalROI').textContent=fmt(R.totalROI);
-  document.getElementById('totalPayouts').textContent=R.payouts.length+' payouts';
-  document.getElementById('totalPayoutsCount').textContent=R.payouts.length+' SIP payouts';
-
-  var badge=document.getElementById('scenBadge');
-  badge.textContent=scenA?'Scenario A — Pay before handover':'Scenario B — Pay at handover';
-  badge.className='badge '+(scenA?'badge-a':'badge-b');
-
-  // Payout table
-  var tbody=document.getElementById('payoutTbody');tbody.innerHTML='';
-  R.payouts.forEach(function(p){
-    var tr=document.createElement('tr');
-    tr.innerHTML=
-      '<td class="tc td-mute">'+p.num+'</td>'
-      +'<td style="font-weight:600">'+p.calDate+'</td>'
-      +'<td class="td-mute">'+p.calFrom+' – '+p.calTo+'</td>'
-      +'<td class="tc td-mute">'+p.duration+' mo</td>'
-      +'<td class="td-gold">'+fmt(p.amount)+'</td>';
-    tbody.appendChild(tr);
-  });
-  var tot=document.createElement('tr');tot.className='tot';
-  tot.innerHTML='<td colspan="4">Total ROI — '+R.payouts.length+' SIP payouts</td><td class="td-gold" style="font-size:14px">'+fmt(R.totalROI)+'</td>';
-  tbody.appendChild(tot);
-
-  // Bars
-  var maxAmt=R.payouts.length?Math.max.apply(null,R.payouts.map(function(p){return p.amount;})):1;
-  var barsEl=document.getElementById('bars');barsEl.innerHTML='';
-  R.payouts.forEach(function(p){
-    var pct=Math.round(p.amount/maxAmt*100);
-    var row=document.createElement('div');row.className='bar-row';
-    row.innerHTML='<div class="bar-lbl">'+p.calDate+'</div>'
-      +'<div class="bar-bg"><div class="bar-fill" style="width:'+pct+'%"></div></div>'
-      +'<div class="bar-val">'+fmt(p.amount)+'</div>';
-    barsEl.appendChild(row);
-  });
-
-  // Note
-  var diff=Math.abs(R.totalROI-Ro.totalROI);
-  var fp=R.payouts.length?R.payouts[0]:null;
-  var finalP=R.payouts.length?R.payouts[R.payouts.length-1]:null;
-  var noteHtml='';
-  if(fp&&fp.isProRata&&!fp.isFinal){
-    noteHtml+='<b>First payout is pro-rated</b> — the 1st installment was paid at Month '+getM(1)+', so ROI accrued for '+fp.duration+' month'+(fp.duration>1?'s':'')+' before the first quarterly payout.<br>';
-  }
-  if(finalP&&finalP.isFinal){
-    noteHtml+=(noteHtml?'<br>':'')+'<b>Final payout at handover ('+finalP.calDate+')</b> — pro-rated for '+finalP.duration+' month'+(finalP.duration>1?'s':'')+' after the last full quarterly payout. Amount: <b>'+fmt(finalP.amount)+'</b>.';
-  }
-  if(noteHtml) document.getElementById('sNote').innerHTML=noteHtml;
-  else document.getElementById('sNote').style.display='none';
-
-  document.getElementById('sNote').style.display='block';
+  var venue=getVenue(venueId), slot=getSlots().find(s=>s.key===slotKey);
+  document.getElementById('modalTitle').textContent='Book a Slot';
+  document.getElementById('modalBody').innerHTML=`
+    <div class="alert alert-info">📅 ${fmtDate(date)} · ${slot?slot.label:''} · ${venue?venue.name:''}</div>
+    <div class="alert alert-ok">✅ This slot is available — the rep selected below will own it exclusively.</div>
+    ${behalfHTML(null)}
+    <div class="fr2">
+      <div class="fg"><label class="req">Agency Name</label><input type="text" id="f_agency" placeholder="Agency name"></div>
+      <div class="fg"><label class="req">Owner / Contact Name</label><input type="text" id="f_owner" placeholder="Full name"></div>
+    </div>
+    <div class="fr2">
+      ${phoneHTML()}
+      <div class="fg"><label class="req">Attendees</label>
+        <input type="number" id="f_att" min="1" max="${venue?venue.capacity:50}" value="1">
+        <div class="hint">Max ${venue?venue.capacity:50} pax for this venue</div></div>
+    </div>
+    <div class="fg"><label>Notes (internal)</label><textarea id="f_notes" placeholder="Interest level, follow-up…"></textarea></div>`;
+  document.getElementById('modalFoot').innerHTML=`
+    <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+    <button class="btn btn-gold" onclick="submitBook('${venueId}','${date}','${slotKey}',false)">Confirm Booking</button>`;
+  document.getElementById('modal').style.display='flex';
 }
 
-function setScen(s, silent){
-  if(s==='A'&&!silent){
-    var confirmed=confirm(
-      '⚠️  Management Approval Required\n\n' +
-      '"Pay before handover" is subject to management approval and is not available to all investors.\n\n' +
-      'The figures shown are for ILLUSTRATIVE PURPOSES ONLY and do not constitute a confirmed offer.\n\n' +
-      'Click OK to view the illustration, or Cancel to stay on the standard plan.'
-    );
-    if(!confirmed) return;
+// ── Add more agencies to existing slot ────────────────────────────
+function openAddToSlot(venueId,date,slotKey){
+  if(!can('canAddToOwnSlot')){alert('You do not have permission to add agencies to a slot.');return;}
+  var owner = slotOwner(venueId,date,slotKey);
+  // Sales user can only add to their own slot
+  if(owner && owner!==CU.id && !can('canViewOthers')){
+    alert('This slot belongs to another rep. You can only add agencies to your own slot.');return;
   }
-  document.getElementById('togA').className='tog'+(s==='A'?' on':'');
-  document.getElementById('togB').className='tog'+(s==='B'?' on':'');
-  var sl5=document.getElementById('sl5'),row5=document.getElementById('row5');
-  if(s==='A'){
-    sl5.disabled=false;row5.className='';
-    var hoMo=getHOMonth();
-    sl5.max=hoMo;
-    if(parseInt(sl5.value)>hoMo)sl5.value=hoMo;
-    document.getElementById('hodue').innerHTML='Pay any time before handover · <b>'+getHO_DISPLAY_FULL()+'</b> · earns ROI from payment date';
+  var venue=getVenue(venueId), slot=getSlots().find(s=>s.key===slotKey);
+  var pax=slotPax(venueId,date,slotKey), remaining=(venue?venue.capacity:50)-pax;
+  if(remaining<=0){alert('This slot is full ('+pax+'/'+( venue?venue.capacity:50)+' pax). No more agencies can be added.');return;}
+  var ownerUser = getUser(owner);
+  var ownerName = ownerUser ? ownerUser.name : '—';
+  var isMySlot = owner===CU.id;
+
+  document.getElementById('modalTitle').textContent='Add Agency to Slot';
+  document.getElementById('modalBody').innerHTML=`
+    <div class="alert alert-info">📅 ${fmtDate(date)} · ${slot?slot.label:''} · ${venue?venue.name:''}</div>
+    <div class="alert alert-ok">🟦 ${isMySlot?'Your slot':'Slot owned by <strong>'+ownerName+'</strong>'} · ${pax} pax used · <strong>${remaining} pax remaining</strong></div>
+    ${behalfHTML(owner)}
+    <div class="fr2">
+      <div class="fg"><label class="req">Agency Name</label><input type="text" id="f_agency" placeholder="Agency name"></div>
+      <div class="fg"><label class="req">Owner / Contact Name</label><input type="text" id="f_owner" placeholder="Full name"></div>
+    </div>
+    <div class="fr2">
+      ${phoneHTML()}
+      <div class="fg"><label class="req">Attendees</label>
+        <input type="number" id="f_att" min="1" max="${remaining}" value="1">
+        <div class="hint">Max ${remaining} pax remaining in this slot</div></div>
+    </div>
+    <div class="fg"><label>Notes (internal)</label><textarea id="f_notes" placeholder="Interest level, follow-up…"></textarea></div>`;
+  document.getElementById('modalFoot').innerHTML=`
+    <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+    <button class="btn btn-gold" onclick="submitBook('${venueId}','${date}','${slotKey}',true)">Add Agency</button>`;
+  document.getElementById('modal').style.display='flex';
+}
+
+function submitBook(venueId,date,slotKey,isAdd){
+  var agency=document.getElementById('f_agency').value.trim();
+  var owner=document.getElementById('f_owner').value.trim();
+  var att=parseInt(document.getElementById('f_att').value)||1;
+  var notes=document.getElementById('f_notes').value.trim();
+  var phone=getPhoneValue();
+  var behalfId=getBehalfId(); // who the booking is attributed to
+
+  if(!agency||!owner){alert('Please fill all required fields.');return;}
+  if(!validatePhone()){alert('Please enter a valid phone number in the format: +[country code]-[number]\nExample: +971-509082142');return;}
+
+  // Slot ownership check — slot belongs to behalfId's user
+  var slotOw=slotOwner(venueId,date,slotKey);
+  if(!isAdd&&slotOw&&slotOw!==behalfId&&slotOw!==CU.id){
+    alert('Slot was just taken by another rep. Please choose another slot.');closeModal();renderCalendar();return;
+  }
+  if(isAdd&&slotOw&&slotOw!==behalfId&&slotOw!==CU.id&&!can('canViewOthers')){
+    alert('You cannot add to another rep\'s slot.');closeModal();return;
+  }
+
+  // Capacity check
+  var venue=getVenue(venueId);
+  var pax=slotPax(venueId,date,slotKey);
+  if(pax+att>(venue?venue.capacity:50)){alert('Not enough capacity. Only '+(venue.capacity-pax)+' pax remaining.');return;}
+
+  // Duplicate warning
+  var dup=activeBk().find(b=>b.agencyName.toLowerCase()===agency.toLowerCase());
+  if(dup&&!confirm('This agency already has a booking in this event. Add anyway?'))return;
+
+  var id=uid();
+  var bk={
+    id,venueId,date,slotKey,
+    agencyName:agency,ownerName:owner,phone,attendees:att,notes,
+    bookedBy:behalfId,          // attributed to behalf user (or self)
+    bookedByAdmin:behalfId!==CU.id?CU.id:null, // track who actually created it
+    status:'confirmed',
+    createdAt:new Date().toISOString()
+  };
+  DB.ref('/events/'+ACTIVE_EID+'/bookings/'+id).set(bk)
+    .then(()=>{showSaved();closeModal();})
+    .catch(e=>alert('Error saving: '+e.message));
+}
+
+// ── View booking ──────────────────────────────────────────────────
+function viewBk(id){
+  var b=CACHE.bookings[id];if(!b)return;
+  var venue=getVenue(b.venueId),slot=getSlots().find(s=>s.key===b.slotKey),rep=getUser(b.bookedBy);
+  var isOwn=b.bookedBy===CU.id;
+  var showDetail=isOwn||can('canViewOthers');
+  var canCancel=can('canCancel')&&b.status!=='cancelled';
+  var canAttend=can('canMarkAttendance')&&b.status==='confirmed';
+  document.getElementById('modalTitle').textContent='Booking Details';
+  var html=`<div class="alert alert-info">📅 ${fmtDate(b.date)} · ${slot?slot.label:'—'} · ${venue?venue.name:'—'}</div>
+    <div class="g2" style="margin-bottom:1rem">
+      <div><div style="font-size:10px;text-transform:uppercase;color:var(--muted);margin-bottom:3px">Status</div><span class="badge badge-${b.status}">${b.status}</span>${b.status==='attended'&&b.paxAttended!==undefined?` <span style="font-size:11px;color:var(--green);font-weight:600">(${b.paxAttended} attended)</span>`:''}</div>
+      <div><div style="font-size:10px;text-transform:uppercase;color:var(--muted);margin-bottom:3px">Booked By</div>
+        <strong>${rep?rep.name:'—'}</strong>
+        ${b.bookedByAdmin?`<div style="font-size:10px;color:var(--orange);margin-top:2px">⚡ Added by ${(getUser(b.bookedByAdmin)||{}).name||'Admin'}</div>`:''}
+      </div>
+    </div>`;
+  if(showDetail){
+    html+=`<div class="g2" style="margin-bottom:1rem">
+      <div><div style="font-size:10px;text-transform:uppercase;color:var(--muted);margin-bottom:3px">Agency</div><strong style="font-size:15px">${b.agencyName}</strong></div>
+      <div><div style="font-size:10px;text-transform:uppercase;color:var(--muted);margin-bottom:3px">Owner</div>${b.ownerName}</div>
+      <div><div style="font-size:10px;text-transform:uppercase;color:var(--muted);margin-bottom:3px">Phone</div><a href="tel:${b.phone}" style="color:var(--blue)">${b.phone}</a></div>
+      <div><div style="font-size:10px;text-transform:uppercase;color:var(--muted);margin-bottom:3px">Attendees</div><strong>${b.attendees} pax</strong></div>
+    </div>`;
+    if(b.notes&&!isOwn) html+=`<div style="margin-bottom:1rem"><div style="font-size:10px;text-transform:uppercase;color:var(--muted);margin-bottom:3px">Notes</div><div style="background:var(--lgold);padding:10px;border-radius:6px;font-size:13px">${b.notes}</div></div>`;
+    if(b.notes&&isOwn) html+=`<div style="margin-bottom:1rem"><div style="font-size:10px;text-transform:uppercase;color:var(--muted);margin-bottom:3px">Your Notes</div><div style="background:var(--lgold);padding:10px;border-radius:6px;font-size:13px">${b.notes}</div></div>`;
   }else{
-    sl5.disabled=true;row5.className='dis-row';
-    document.getElementById('hodue').innerHTML='Paid at actual handover ('+getHO_DISPLAY_FULL()+') · <b id="due5">No ROI on this amount</b>';
+    html+=`<div class="alert alert-warn">🔒 Detailed info is only visible for your own bookings.</div><div><strong>Attendees:</strong> ${b.attendees} pax</div>`;
   }
-  render();
+  html+=`<div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border);font-size:11px;color:var(--muted)">${fmtDT(b.createdAt)}</div>`;
+  document.getElementById('modalBody').innerHTML=html;
+  var foot='<button class="btn btn-outline" onclick="closeModal()">Close</button>';
+  if(canAttend) foot+=`
+    <button class="btn btn-green btn-sm" onclick="openAttendModal('${id}')">✓ Attended</button>
+    <button class="btn btn-outline btn-sm" style="border-color:var(--orange);color:var(--orange)" onclick="setStatus('${id}','noshow',0)">No-show</button>`;
+  if(canCancel) foot+=`<button class="btn btn-red btn-sm" onclick="cancelBk('${id}')">Cancel</button>`;
+  document.getElementById('modalFoot').innerHTML=foot;
+  document.getElementById('modal').style.display='flex';
+}
+function openAttendModal(id){
+  var b=CACHE.bookings[id]; if(!b) return;
+  document.getElementById('modalTitle').textContent='Mark Attendance';
+  document.getElementById('modalBody').innerHTML=`
+    <div class="alert alert-info">🏢 <b>${b.agencyName}</b> · ${b.attendees} pax registered</div>
+    <div class="fg">
+      <label class="req">Actual pax attended</label>
+      <input type="number" id="paxAttended" min="0" max="${b.attendees}" value="${b.attendees}" style="width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:16px;font-weight:700;text-align:center">
+      <div class="hint">Enter how many people actually showed up (max ${b.attendees} registered)</div>
+    </div>`;
+  document.getElementById('modalFoot').innerHTML=`
+    <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+    <button class="btn btn-green" onclick="confirmAttend('${id}')">✓ Confirm Attendance</button>`;
+  document.getElementById('modal').style.display='flex';
+  setTimeout(()=>document.getElementById('paxAttended').focus(),100);
 }
 
-// ── PDF SALES OFFER ───────────────────────────────────────────────────────────
-function generatePDF(){
-  var pv=parseFloat(document.getElementById('propVal').value);
-  if(!pv||pv<=0){alert('Please enter a property value first.');return;}
-
-  var scenA=(document.getElementById('togA').className.indexOf('on')>=0);
-  var R=computePayouts(pv,scenA);
-  var dp=getDPDate();
-  var hoMo=getHOMonth();
-  var propName=document.getElementById('propName').value;
-  var unitSel=document.getElementById('unitType');
-  var unitLabel=unitSel.options[unitSel.selectedIndex].text.replace(/\s*—\s*AED[\d,]+$/,'').replace(/Custom.*$/,'Custom');
-  var refNum='SIP-'+(dp.getMonth()+1<10?'0':'')+(dp.getMonth()+1)+dp.getFullYear()+'-'+Math.floor(Math.random()*9000+1000);
-  var prepDate=fmtDateLong(new Date());
-  var hoDisp=getHO_DISPLAY_FULL();
-  var dldAmt=Math.round(pv*0.04)+40;
-  var downPmt=Math.round(pv*0.10);
-  var adminFee=2500;
-  var oqoodFee=1060;
-  var totalEntry=downPmt+dldAmt+adminFee+oqoodFee;
-
-  var instAmts=[pv*.10,pv*.20,pv*.20,pv*.40];
-  var instNames=['1st Installment (10%)','2nd Installment (20%)','3rd Installment (20%)','Handover Payment (40%)'];
-  var instDues=getInstDues();
-  var instCount=scenA?4:3;
-
-  var schedRows='<tr class="dp-row"><td class="c">1</td><td>Down Payment</td>'
-    +'<td>'+fmtDate(dp)+'</td><td class="r">'+fmt(downPmt)+'</td>'
-    +'<td class="c">10%</td><td style="color:#888;font-style:italic">No ROI on Down Payment</td></tr>';
-  for(var ii=0;ii<instCount;ii++){
-    var actualMo=getM(ii+1);
-    var actualDate=fmtDate(addMonths(dp,actualMo));
-    var dueDate=fmtDate(addMonths(dp,instDues[ii]));
-    var earlyNote=actualMo<instDues[ii]?' <span style="color:#d97706;font-size:7pt">(early · due '+dueDate+')</span>':'';
-    var roiNote=ii===3?'* ROI from payment receipt (if paid before handover)':'ROI from payment receipt';
-    schedRows+='<tr><td class="c">'+(ii+2)+'</td><td>'+instNames[ii]+earlyNote+'</td>'
-      +'<td class="bold">'+actualDate+'</td>'
-      +'<td class="r bold">'+fmt(instAmts[ii])+'</td>'
-      +'<td class="c">'+(ii===0?10:ii===3?40:20)+'%</td>'
-      +'<td class="gold" style="font-size:7.5pt">'+roiNote+'</td></tr>';
-  }
-  if(!scenA){
-    schedRows+='<tr><td class="c">'+(instCount+2)+'</td><td>Handover Payment (40%)</td>'
-      +'<td>'+hoDisp+'</td><td class="r">'+fmt(pv*.40)+'</td>'
-      +'<td class="c">40%</td><td style="color:#888;font-size:7.5pt">No ROI (paid at handover)</td></tr>';
-  }
-  schedRows+='<tr style="background:#f5f4f0"><td></td><td><b>TOTAL</b></td><td></td>'
-    +'<td class="r bold" style="font-size:9pt">'+fmt(pv)+'</td><td class="c bold">100%</td><td></td></tr>';
-
-  var qRows=R.payouts.map(function(p){
-    var rowStyle=p.isFinal?'background:#fffbf0':'';
-    return '<tr style="'+rowStyle+'"><td class="c">'+p.num+'</td>'
-      +'<td class="bold">'+p.calDate+'</td>'
-      +'<td style="font-size:7.5pt">'+p.calFrom+' \u2013 '+p.calTo+'</td>'
-      +'<td class="c">'+p.duration+' mo</td>'
-      +'<td class="r gold">'+fmt(p.amount)+'</td></tr>';
-  }).join('');
-
-  var html=
-  '<div class="so-page">'
-    +'<div style="text-align:center;background:#fffbf0;border:1px solid #D4B96A;border-radius:4px;padding:5px 12px;margin-bottom:10px;font-size:8pt;font-weight:700;color:#8A6E25;letter-spacing:.1em;text-transform:uppercase">ILLUSTRATIVE PURPOSES ONLY — NOT A LEGALLY BINDING DOCUMENT</div>'
-    +'<div class="so-header"><div><div class="so-brand-name">VINCITORE REALTY</div><div class="so-brand-tag">Secured Investors Programme</div></div>'
-    +'<div class="so-doc-title"><h2>Investment Offer</h2><p>Payment Schedule &amp; SIP Payout Projections</p></div></div>'
-    +'<div class="so-meta">'
-      +'<div class="so-meta-item"><div class="so-meta-lbl">Reference</div><div class="so-meta-val">'+refNum+'</div></div>'
-      +'<div class="so-meta-item"><div class="so-meta-lbl">Date prepared</div><div class="so-meta-val">'+prepDate+'</div></div>'
-      +'<div class="so-meta-item"><div class="so-meta-lbl">SIP Payout Until Handover</div><div class="so-meta-val">'+hoDisp+'</div></div>'
-    +'</div>'
-    +'<div class="so-two-col">'
-      +'<div class="so-box"><div class="so-box-title">Property Details</div>'
-        +'<table>'
-        +'<tr><td>Project</td><td>'+propName+'</td></tr>'
-        +'<tr><td>Unit Type</td><td>'+unitLabel+'</td></tr>'
-        +'<tr><td>Developer</td><td>Vincitore Realty</td></tr>'
-        +'<tr><td>Down Payment Date</td><td>'+fmtDate(dp)+'</td></tr>'
-        +'<tr><td>First Payout Date</td><td style="color:#B8973A;font-weight:700">'+fmtDate(addMonths(dp,3))+'</td></tr>'
-        +'<tr><td>Payout Frequency</td><td>Every 3 months from booking</td></tr>'
-        +'<tr><td>Expected Handover</td><td style="color:#B8973A;font-weight:700">'+hoDisp+'</td></tr>'
-        +'<tr><td>ROI Rate</td><td style="color:#B8973A;font-weight:700">8% net per annum</td></tr>'
-        +'</table></div>'
-      +'<div class="so-box"><div class="so-box-title">Investment Summary</div>'
-        +'<table>'
-        +'<tr><td>Property Value</td><td>'+fmt(pv)+'</td></tr>'
-        +'<tr><td>Down Payment (10%)</td><td>'+fmt(downPmt)+'</td></tr>'
-        +'<tr><td>DLD Fee (4%) + AED 40 (Processing charges)</td><td>'+fmt(dldAmt)+'</td></tr>'
-        +'<tr><td>Admin Fee</td><td>AED 2,500</td></tr>'
-        +'<tr><td>Oqood Registration Fee</td><td>AED 1,060</td></tr>'
-        +'<tr><td style="font-weight:700;border-top:1px solid #ddd;padding-top:4px">Total Entry Cost</td><td style="font-weight:700;color:#B8973A;border-top:1px solid #ddd;padding-top:4px">'+fmt(totalEntry)+'</td></tr>'
-        +'<tr><td style="padding-top:8px">Total SIP Payouts</td><td style="padding-top:8px;font-weight:700">'+R.payouts.length+'</td></tr>'
-        +'<tr><td>Total ROI Earned</td><td style="color:#B8973A;font-weight:700">'+fmt(R.totalROI)+'</td></tr>'
-        +'</table></div>'
-    +'</div>'
-    +'<div class="so-section-title">Payment Schedule</div>'
-    +'<table class="so-tbl"><thead><tr><th class="c">#</th><th>Description</th><th>Payment date</th>'
-      +'<th class="r">Amount</th><th class="c">%</th><th>ROI notes</th></tr></thead>'
-      +'<tbody>'+schedRows+'</tbody></table>'
-    +'<div class="so-returns" style="grid-template-columns:1fr 1fr;margin-top:10px">'
-      +'<div class="so-return-box"><div class="so-return-lbl">Property Value</div><div class="so-return-val">'+fmt(pv)+'</div></div>'
-      +'<div class="so-return-box feat"><div class="so-return-lbl">Total ROI Earned</div><div class="so-return-val gold">'+fmt(R.totalROI)+'</div></div>'
-    +'</div>'
-    +'<div class="so-disclaimer">'
-      +'<b>* ROI from payment receipt (if paid before handover)</b> \u2014 the Handover Payment (40%) earns ROI from the date the payment is received, provided it is before the actual handover date of '+hoDisp+'. If paid at handover, this installment carries no ROI. The Down Payment (10%) does not earn ROI in any scenario.<br><br>'
-      +'<b>DISCLAIMER \u2014 ILLUSTRATIVE PURPOSES ONLY</b><br>'
-      +'This document is prepared for illustrative and indicative purposes only. Figures are projections based on the stated payment schedule and ROI structure (8% net per annum, paid quarterly, starting 3 months from the booking date). Actual returns are subject to the terms of the official SPA. This document does not constitute a legally binding commitment or financial advice. The handover date of '+hoDisp+' is a target and subject to change. If handover is delayed, ROI payments continue until actual handover. Investors should review the official SPA and seek independent legal and financial counsel before making any investment decision.<br><br>'
-      +'<b>Default in Payments:</b> In case of default in payments, the developer reserves the right to cancel all future ROI payments.'
-    +'</div>'
-  +'</div>'
-  +'<div class="so-page-2">'
-    +'<div class="so-pg2-hdr"><div class="so-pg2-brand">VINCITORE REALTY \u2014 SECURED INVESTORS PROGRAMME</div><div>SIP Payout Schedule \u00b7 Ref: '+refNum+'</div></div>'
-    +'<div class="so-section-title">SIP Quarterly Payout Schedule</div>'
-    +'<div style="font-size:7.5pt;color:#888;margin-bottom:8px">Payouts are quarterly from Month 3 of the booking date. A final payout is made at handover for any remaining partial quarter. ROI base excludes the Down Payment (10%) in all scenarios.</div>'
-    +'<table class="so-tbl"><thead><tr><th class="c">#</th><th>Payout date</th><th>Period covered</th>'
-      +'<th class="c">Duration</th><th class="r">Payout amount</th>'
-    +'</tr></thead><tbody>'+qRows+'</tbody>'
-    +'<tfoot><tr><td colspan="4"><b>TOTAL ROI \u2014 '+R.payouts.length+' SIP PAYOUTS</b></td><td class="r">'+fmt(R.totalROI)+'</td></tr></tfoot>'
-    +'</table>'
-    +'<div class="so-disclaimer" style="margin-top:14px">'
-      +'<b>ROI calculation:</b> Each payout = ROI base \u00d7 8% \u00d7 (duration \u00f7 12). ROI base = cumulative installments paid (Down Payment excluded). First and final payouts may be pro-rated for partial quarters.<br><br>'
-      +'<b>For the purpose of calculation, all payments and payouts are considered to be receivable and payable at the beginning of the month.</b><br><br>'
-      +'<b>Vincitore Realty</b> \u00b7 Ref: '+refNum+' \u00b7 '+prepDate
-    +'</div>'
-  +'</div>';
-
-  document.getElementById('salesOffer').innerHTML=html;
-  window.print();
+function confirmAttend(id){
+  var pax=parseInt(document.getElementById('paxAttended').value)||0;
+  var b=CACHE.bookings[id];
+  var updates={status:'attended', paxAttended:pax, attendedAt:new Date().toISOString()};
+  DB.ref('/events/'+ACTIVE_EID+'/bookings/'+id).update(updates).then(()=>{showSaved();closeModal();});
 }
-document.getElementById('propVal').addEventListener('input',render);
-document.getElementById('dpDate').addEventListener('change',function(){
-  var dues=getInstDues();
-  var slMap=[{id:1,dueIdx:0},{id:2,dueIdx:1},{id:3,dueIdx:2},{id:5,dueIdx:3}];
-  slMap.forEach(function(s){
-    var sl=document.getElementById('sl'+s.id);if(!sl)return;
-    sl.max=dues[s.dueIdx]||hoMo;
-    sl.min=s.dueIdx===0?0:(dues[s.dueIdx-1]||0);
-    sl.value=dues[s.dueIdx]||hoMo;
+
+function setStatus(id,status,paxAttended){
+  var updates={status:status};
+  if(status==='attended') updates.paxAttended=paxAttended||0;
+  DB.ref('/events/'+ACTIVE_EID+'/bookings/'+id).update(updates).then(()=>{showSaved();closeModal();});
+}
+function cancelBk(id){if(!confirm('Cancel this booking?'))return;DB.ref('/events/'+ACTIVE_EID+'/bookings/'+id).update({status:'cancelled',cancelledAt:new Date().toISOString(),cancelledBy:CU.id}).then(()=>{showSaved();closeModal();});}
+function closeModal(){document.getElementById('modal').style.display='none';}
+document.getElementById('modal').addEventListener('click',e=>{if(e.target===document.getElementById('modal'))closeModal();});
+
+// ── My Bookings ───────────────────────────────────────────────────
+function renderMyBookings(){
+  var mine=allBk().filter(b=>b.bookedBy===CU.id).sort((a,b)=>a.date>b.date?1:-1);
+  var html=`<div class="page-header"><div class="ph-row">
+    <div><div class="page-title">My Bookings</div>
+    <div class="page-sub">${mine.filter(b=>b.status!=='cancelled').length} active</div></div>
+    <div class="actions">${can('canBook')?'<button class="btn btn-gold" onclick="navigate(\'calendar\')">+ New Booking</button>':''}</div>
+  </div></div>`;
+  if(!mine.length){html+=`<div class="empty"><div class="ei">📋</div><p>No bookings yet</p></div>`;}
+  else{
+    html+=`<div class="card"><table class="tbl"><thead><tr><th>Date</th><th>Slot</th><th>Venue</th><th>Agency</th><th>Owner</th><th>Phone</th><th>Pax</th><th>Status</th><th></th></tr></thead><tbody>`;
+    mine.forEach(b=>{
+      var v=getVenue(b.venueId),s=getSlots().find(x=>x.key===b.slotKey);
+      html+=`<tr style="${b.status==='cancelled'?'opacity:.5':''}">
+        <td>${fmtDate(b.date)}</td><td style="font-size:11px">${s?s.label:'—'}</td>
+        <td style="font-size:11px">${v?v.name.split('–')[0].trim():'—'}</td>
+        <td><strong>${b.agencyName}</strong></td><td>${b.ownerName}</td>
+        <td><a href="tel:${b.phone}" style="color:var(--blue)">${b.phone}</a></td>
+        <td>${b.attendees}</td><td><span class="badge badge-${b.status}">${b.status}</span></td>
+        <td><button class="btn btn-outline btn-xs" onclick="viewBk('${b.id}')">View</button></td></tr>`;
+    });
+    html+='</tbody></table></div>';
+  }
+  document.getElementById('content').innerHTML=html;
+}
+
+// ── All Bookings ──────────────────────────────────────────────────
+function renderAllBookings(){
+  var all=allBk().sort((a,b)=>a.date>b.date?1:-1);
+  var html=`<div class="page-header"><div class="ph-row">
+    <div><div class="page-title">All Bookings</div>
+    <div class="page-sub">${all.filter(b=>b.status!=='cancelled').length} active · ${all.filter(b=>b.status==='cancelled').length} cancelled</div></div>
+    <div class="actions">${can('canExport')?'<button class="btn btn-gold" onclick="exportCSV()">⬇ Export CSV</button>':''}</div>
+  </div></div>
+  <div class="card">
+    <div style="display:flex;gap:6px;margin-bottom:1rem;flex-wrap:wrap">`;
+  ['all','confirmed','attended','noshow','cancelled'].forEach(s=>{
+    var cnt=s==='all'?all.length:all.filter(b=>b.status===s).length;
+    html+=`<button class="btn btn-outline btn-sm" onclick="filterBk('${s}')">${s.charAt(0).toUpperCase()+s.slice(1)} (${cnt})</button>`;
   });
-  render();
-});
-document.getElementById('propName').addEventListener('change',render);
-// Init cascading selects
-onProjectChange();
-updateDueDates();updateLabels();
-setScen('B', true); // default to pay at handover — silent, no popup
+  html+=`</div><div id="bkTbl">${buildBkTbl(all)}</div></div>`;
+  document.getElementById('content').innerHTML=html;
+}
+function filterBk(s){var all=allBk().sort((a,b)=>a.date>b.date?1:-1);document.getElementById('bkTbl').innerHTML=buildBkTbl(s==='all'?all:all.filter(b=>b.status===s));}
+function buildBkTbl(bks){
+  if(!bks.length)return'<div class="empty"><div class="ei">📋</div><p>No bookings</p></div>';
+  var html=`<table class="tbl"><thead><tr><th>Date</th><th>Slot</th><th>Venue</th><th>Agency</th><th>Owner</th><th>Phone</th><th>Pax</th><th>Booked By</th><th>Status</th><th></th></tr></thead><tbody>`;
+  bks.forEach(b=>{
+    var v=getVenue(b.venueId),s=getSlots().find(x=>x.key===b.slotKey),rep=getUser(b.bookedBy);
+    html+=`<tr style="${b.status==='cancelled'?'opacity:.5':''}">
+      <td>${fmtDate(b.date)}</td><td style="font-size:11px">${s?s.label:'—'}</td>
+      <td style="font-size:11px">${v?v.name.split('–')[0].trim():'—'}</td>
+      <td><strong>${b.agencyName}</strong></td><td>${b.ownerName}</td>
+      <td><a href="tel:${b.phone}" style="color:var(--blue)">${b.phone}</a></td>
+      <td>${b.attendees}</td><td style="font-size:12px">${rep?rep.name:'—'}</td>
+      <td><span class="badge badge-${b.status}">${b.status}</span></td>
+      <td><button class="btn btn-outline btn-xs" onclick="viewBk('${b.id}')">View</button></td></tr>`;
+  });
+  return html+'</tbody></table>';
+}
 
-// Logo
-(function(){var el=document.getElementById('calcLogo');if(el)el.src='data:image/png;base64,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';})();
-</script>
-</body>
-</html>
+// ── Agencies ──────────────────────────────────────────────────────
+function renderAgencies(){
+  var active=activeBk(),map={};
+  active.forEach(b=>{
+    if(!map[b.agencyName])map[b.agencyName]={name:b.agencyName,owner:b.ownerName,phone:b.phone,bks:[],pax:0};
+    map[b.agencyName].bks.push(b);map[b.agencyName].pax+=parseInt(b.attendees||1);
+  });
+  var agencies=Object.values(map).sort((a,b)=>a.name.localeCompare(b.name));
+  var html=`<div class="page-header"><div class="ph-row">
+    <div><div class="page-title">🏢 Agencies</div><div class="page-sub">${agencies.length} agencies registered</div></div>
+    <div class="actions">${can('canExport')?'<button class="btn btn-gold" onclick="exportCSV()">⬇ Export CSV</button>':''}</div>
+  </div></div><div class="card">`;
+  if(!agencies.length){html+=`<div class="empty"><div class="ei">🏢</div><p>No agencies yet</p></div>`;}
+  else{
+    html+=`<table class="tbl"><thead><tr><th>Agency</th><th>Owner</th><th>Phone</th><th>Bookings</th><th>Total Pax</th><th>Statuses</th></tr></thead><tbody>`;
+    agencies.forEach(a=>{
+      var ss=[...new Set(a.bks.map(b=>b.status))];
+      html+=`<tr><td><strong>${a.name}</strong></td><td>${a.owner}</td>
+        <td><a href="tel:${a.phone}" style="color:var(--blue)">${a.phone}</a></td>
+        <td>${a.bks.length}</td><td>${a.pax}</td>
+        <td>${ss.map(s=>`<span class="badge badge-${s}">${s}</span>`).join(' ')}</td></tr>`;
+    });
+    html+='</tbody></table>';
+  }
+  html+='</div>';document.getElementById('content').innerHTML=html;
+}
+
+// ── Users ─────────────────────────────────────────────────────────
+function renderUsers(){
+  var html=`<div class="page-header"><div class="ph-row">
+    <div><div class="page-title">👥 Users</div><div class="page-sub">${Object.keys(CACHE.users).length} users</div></div>
+    <div class="actions"><button class="btn btn-gold" onclick="openAddUser()">+ Add User</button></div>
+  </div></div><div class="card">
+  <table class="tbl"><thead><tr><th>Name</th><th>Username</th><th>Role</th><th>Bookings</th><th>Actions</th></tr></thead><tbody>`;
+  Object.values(CACHE.users).forEach(u=>{
+    var bks=activeBk().filter(b=>b.bookedBy===u.id).length;
+    html+=`<tr><td><strong>${u.name}</strong>${u.id===CU.id?' <span style="font-size:10px;color:var(--muted)">(you)</span>':''}</td>
+      <td><code style="background:var(--lgold);padding:2px 6px;border-radius:4px;font-size:12px">${u.username}</code></td>
+      <td><span style="font-weight:600">${(roles()[u.role]||{}).label||u.role}</span></td>
+      <td>${bks}</td>
+      <td><button class="btn btn-outline btn-xs" onclick="editUser('${u.id}')">Edit</button>
+      ${u.id!==CU.id?`<button class="btn btn-red btn-xs" style="margin-left:4px" onclick="delUser('${u.id}')">Remove</button>`:''}</td></tr>`;
+  });
+  html+='</tbody></table></div>';document.getElementById('content').innerHTML=html;
+}
+function userForm(u){
+  u=u||{};
+  var roleOpts=Object.entries(roles()).map(([k,r])=>`<option value="${k}" ${u.role===k?'selected':''}>${r.label||k}</option>`).join('');
+  return `<div class="fr2">
+    <div class="fg"><label class="req">Full Name</label><input type="text" id="uf_name" value="${u.name||''}" placeholder="Full name"></div>
+    <div class="fg"><label class="req">Username</label><input type="text" id="uf_uname" value="${u.username||''}" placeholder="username"></div>
+  </div><div class="fr2">
+    <div class="fg"><label ${!u.id?'class="req"':''}>Password${u.id?' (blank=keep)':''}</label><input type="password" id="uf_pass" placeholder="${u.id?'Leave blank to keep':'Set password'}"></div>
+    <div class="fg"><label class="req">Role</label><select id="uf_role">${roleOpts}</select></div>
+  </div>`;
+}
+function openAddUser(){document.getElementById('modalTitle').textContent='Add User';document.getElementById('modalBody').innerHTML=userForm({});document.getElementById('modalFoot').innerHTML=`<button class="btn btn-outline" onclick="closeModal()">Cancel</button><button class="btn btn-gold" onclick="saveUser(null)">Add User</button>`;document.getElementById('modal').style.display='flex';}
+function editUser(id){var u=CACHE.users[id];document.getElementById('modalTitle').textContent='Edit User';document.getElementById('modalBody').innerHTML=userForm(u);document.getElementById('modalFoot').innerHTML=`<button class="btn btn-outline" onclick="closeModal()">Cancel</button><button class="btn btn-gold" onclick="saveUser('${id}')">Save</button>`;document.getElementById('modal').style.display='flex';}
+function saveUser(id){
+  var name=document.getElementById('uf_name').value.trim();
+  var username=document.getElementById('uf_uname').value.trim();
+  var pass=document.getElementById('uf_pass').value;
+  var role=document.getElementById('uf_role').value;
+  if(!name||!username){alert('Name and username required.');return;}
+  if(!id&&!pass){alert('Password required for new users.');return;}
+  if(Object.values(CACHE.users).find(u=>u.username===username&&u.id!==id)){alert('Username taken.');return;}
+  if(id){var upd={name,username,role};if(pass)upd.password=pass;DB.ref('/users/'+id).update(upd).then(()=>{showSaved();closeModal();});}
+  else{var nid='u'+Date.now();DB.ref('/users/'+nid).set({id:nid,username,password:pass,name,role}).then(()=>{showSaved();closeModal();});}
+}
+function delUser(id){var u=CACHE.users[id];if(!confirm('Remove "'+u.name+'"?'))return;DB.ref('/users/'+id).remove().then(()=>showSaved());}
+
+// ── Roles & Permissions ───────────────────────────────────────────
+function renderRoles(){
+  var rls=roles();
+  var html=`<div class="page-header"><div class="ph-row">
+    <div><div class="page-title">🔐 Roles & Access</div>
+    <div class="page-sub">Configure what each role can do. Changes apply immediately.</div></div>
+    <div class="actions"><button class="btn btn-gold" onclick="openAddRole()">+ New Role</button></div>
+  </div></div>`;
+
+  // Permissions matrix table
+  html+=`<div class="card" style="margin-bottom:1rem;overflow-x:auto">
+    <div class="card-title">Permissions Matrix</div>
+    <table class="perm-tbl"><thead><tr><th>Permission</th>`;
+  Object.entries(rls).forEach(([k,r])=>{html+=`<th>${r.label||k}</th>`;});
+  html+='</tr></thead><tbody>';
+
+  ALL_PERMS.forEach(p=>{
+    html+=`<tr><td>${p.label}</td>`;
+    Object.entries(rls).forEach(([roleKey,r])=>{
+      var checked=!!(r.perms||{})[p.key];
+      var isSys=roleKey==='superadmin';
+      html+=`<td><label class="tog"><input type="checkbox" ${checked?'checked':''} ${isSys?'disabled':''} onchange="togglePerm('${roleKey}','${p.key}',this.checked)"><span class="tog-sl"></span></label></td>`;
+    });
+    html+='</tr>';
+  });
+  html+='</tbody></table></div>';
+
+  // Role cards
+  html+=`<div class="card"><div class="card-title">Manage Roles</div>`;
+  Object.entries(rls).forEach(([k,r])=>{
+    var userCount=Object.values(CACHE.users).filter(u=>u.role===k).length;
+    html+=`<div class="role-card${k==='superadmin'?' is-system':''}">
+      <div>
+        <div style="font-weight:600;font-size:14px">${r.label||k} ${k==='superadmin'?'<span style="font-size:10px;color:var(--gold)">(system)</span>':''}</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:3px">${userCount} user${userCount!==1?'s':''} · Key: <code style="background:var(--lgold);padding:1px 5px;border-radius:3px">${k}</code></div>
+      </div>
+      <div style="display:flex;gap:6px">
+        ${k!=='superadmin'?`<button class="btn btn-outline btn-sm" onclick="editRole('${k}')">Rename</button>`:''}
+        ${k!=='superadmin'&&userCount===0?`<button class="btn btn-red btn-sm" onclick="delRole('${k}')">Delete</button>`:''}
+      </div>
+    </div>`;
+  });
+  html+='</div>';
+  document.getElementById('content').innerHTML=html;
+}
+
+function togglePerm(roleKey,perm,val){
+  DB.ref('/roles/'+roleKey+'/perms/'+perm).set(val).then(()=>showSaved());
+}
+function openAddRole(){
+  document.getElementById('modalTitle').textContent='New Role';
+  document.getElementById('modalBody').innerHTML=`
+    <div class="fg"><label class="req">Role Label (display name)</label><input type="text" id="r_label" placeholder="e.g. Operation"></div>
+    <div class="fg"><label class="req">Role Key (no spaces)</label><input type="text" id="r_key" placeholder="e.g. operation">
+      <div class="hint">Used internally · lowercase letters only</div></div>
+    <div class="alert alert-info" style="margin-top:0">All permissions start OFF. Enable them from the matrix after creating.</div>`;
+  document.getElementById('modalFoot').innerHTML=`<button class="btn btn-outline" onclick="closeModal()">Cancel</button><button class="btn btn-gold" onclick="saveNewRole()">Create Role</button>`;
+  document.getElementById('modal').style.display='flex';
+}
+function saveNewRole(){
+  var label=document.getElementById('r_label').value.trim();
+  var key=document.getElementById('r_key').value.trim().toLowerCase().replace(/[^a-z0-9_]/g,'');
+  if(!label||!key){alert('Both fields required.');return;}
+  if(roles()[key]){alert('Role key already exists.');return;}
+  var newRole={label,system:false,perms:{}};
+  ALL_PERMS.forEach(p=>{newRole.perms[p.key]=false;});
+  DB.ref('/roles/'+key).set(newRole).then(()=>{showSaved();closeModal();});
+}
+function editRole(key){
+  var r=roles()[key];
+  document.getElementById('modalTitle').textContent='Rename Role';
+  document.getElementById('modalBody').innerHTML=`<div class="fg"><label class="req">Role Label</label><input type="text" id="r_label" value="${r.label||key}"></div>`;
+  document.getElementById('modalFoot').innerHTML=`<button class="btn btn-outline" onclick="closeModal()">Cancel</button><button class="btn btn-gold" onclick="DB.ref('/roles/${key}/label').set(document.getElementById('r_label').value.trim()).then(()=>{showSaved();closeModal();})">Save</button>`;
+  document.getElementById('modal').style.display='flex';
+}
+function delRole(key){if(!confirm('Delete role "'+key+'"?'))return;DB.ref('/roles/'+key).remove().then(()=>{showSaved();});}
+
+// ── Events ────────────────────────────────────────────────────────
+function renderEvents(){
+  var html=`<div class="page-header"><div class="ph-row">
+    <div><div class="page-title">🗓 Events</div><div class="page-sub">Create and manage briefing events</div></div>
+    <div class="actions"><button class="btn btn-gold" onclick="openNewEvent()">+ New Event</button></div>
+  </div></div>`;
+  Object.entries(CACHE.eventsMeta).forEach(([eid,meta])=>{
+    var isActive=eid===ACTIVE_EID;
+    html+=`<div class="card" style="margin-bottom:.75rem;border-color:${isActive?'var(--gold)':'var(--border)'}">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+        <div>
+          <div style="font-size:15px;font-weight:600">${meta.name} ${isActive?'<span style="font-size:11px;color:var(--gold)">● Active</span>':''}</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:3px">Created: ${fmtDT(meta.createdAt)}</div>
+        </div>
+        <div style="display:flex;gap:6px">
+          ${!isActive?`<button class="btn btn-outline btn-sm" onclick="switchEvent('${eid}')">Set Active</button>`:''}
+          <button class="btn btn-gold btn-sm" onclick="navigate('config')">Settings</button>
+        </div>
+      </div>
+    </div>`;
+  });
+  document.getElementById('content').innerHTML=html;
+}
+function openNewEvent(){
+  document.getElementById('modalTitle').textContent='New Event';
+  document.getElementById('modalBody').innerHTML=`
+    <div class="fg"><label class="req">Event Name</label><input type="text" id="ne_name" placeholder="e.g. SIP Launch — Agency Briefing"></div>
+    <div class="fr2">
+      <div class="fg"><label class="req">Start Date</label><input type="date" id="ne_start"></div>
+      <div class="fg"><label class="req">End Date</label><input type="date" id="ne_end"></div>
+    </div>
+    <div class="alert alert-info">Slot times, venues and capacity can be configured in Settings after creating.</div>`;
+  document.getElementById('modalFoot').innerHTML=`<button class="btn btn-outline" onclick="closeModal()">Cancel</button><button class="btn btn-gold" onclick="createEvent()">Create Event</button>`;
+  document.getElementById('modal').style.display='flex';
+}
+function createEvent(){
+  var name=document.getElementById('ne_name').value.trim();
+  var start=document.getElementById('ne_start').value;
+  var end=document.getElementById('ne_end').value;
+  if(!name||!start||!end){alert('All fields required.');return;}
+  var eid='event_'+Date.now();
+  var newCfg={...DEFAULT_EVENT_CFG,name,startDate:start,endDate:end};
+  DB.ref('/events/'+eid+'/config').set(newCfg).then(()=>{
+    return DB.ref('/events_meta/'+eid).set({name,createdAt:new Date().toISOString()});
+  }).then(()=>{showSaved();closeModal();alert('Event created. Click "Set Active" to switch to it.');});
+}
+
+// ── Settings ──────────────────────────────────────────────────────
+function renderConfig(){
+  var c=cfg()||{};
+  var slots=getSlots();
+  var html=`<div class="page-header"><div class="ph-row">
+    <div><div class="page-title">⚙️ Settings</div>
+    <div class="page-sub">Active event: ${c.name||'—'}</div></div>
+    <div class="actions"><button class="btn btn-gold" onclick="saveConfig()">💾 Save Changes</button></div>
+  </div></div>
+  <div class="card" style="margin-bottom:1rem">
+    <div class="card-title">Event Details</div>
+    <div class="cfg-grid">
+      <div class="fg"><label>Event Name</label><input type="text" id="c_name" value="${c.name||''}"></div>
+      <div class="fg"><label>Start Date</label><input type="date" id="c_start" value="${c.startDate||''}"></div>
+      <div class="fg"><label>End Date</label><input type="date" id="c_end" value="${c.endDate||''}"></div>
+    </div>
+    <div class="cfg-grid">
+      <div class="fg"><label>Slot Start</label><input type="time" id="c_ss" value="${c.slotStart||'10:30'}"></div>
+      <div class="fg"><label>Slot End</label><input type="time" id="c_se" value="${c.slotEnd||'18:30'}"></div>
+      <div class="fg"><label>Slot Duration (minutes)</label><input type="number" id="c_dur" value="${c.slotDuration||60}" min="15" max="240">
+        <div class="hint">= ${slots.length} slots/day currently</div></div>
+    </div>
+  </div>
+  <div class="card" style="margin-bottom:1rem">
+    <div class="card-title">Venues</div>`;
+  (c.venues||[]).forEach((v,i)=>{
+    html+=`<div class="venue-cfg">
+      <div class="fg"><label>Venue Name</label><input type="text" id="v_name_${i}" value="${v.name}"></div>
+      <div class="fg" style="max-width:120px"><label>Capacity</label><input type="number" id="v_cap_${i}" value="${v.capacity}" min="1"></div>
+      <button class="btn btn-red btn-sm" onclick="removeVenue(${i})" title="Remove venue">✕</button>
+    </div>`;
+  });
+  html+=`<button class="btn btn-outline btn-sm" onclick="addVenue()">+ Add Venue</button></div>
+  <div class="card">
+    <div class="card-title" style="color:var(--red)">⚠️ Danger Zone</div>
+    <button class="btn btn-red btn-sm" onclick="resetBk()">Delete All Bookings for This Event</button>
+    <div class="hint" style="margin-top:8px">Cannot be undone</div>
+  </div>`;
+  document.getElementById('content').innerHTML=html;
+}
+function saveConfig(){
+  var c=cfg()||{};
+  var newCfg={
+    name:document.getElementById('c_name').value,
+    startDate:document.getElementById('c_start').value,
+    endDate:document.getElementById('c_end').value,
+    slotStart:document.getElementById('c_ss').value,
+    slotEnd:document.getElementById('c_se').value,
+    slotDuration:parseInt(document.getElementById('c_dur').value)||60,
+    venues:(c.venues||[]).map((v,i)=>({id:v.id,name:document.getElementById('v_name_'+i).value,capacity:parseInt(document.getElementById('v_cap_'+i).value)||50}))
+  };
+  DB.ref('/events/'+ACTIVE_EID+'/config').set(newCfg).then(()=>{
+    return DB.ref('/events_meta/'+ACTIVE_EID+'/name').set(newCfg.name);
+  }).then(()=>{showSaved();alert('Settings saved.');}).catch(e=>alert(e.message));
+}
+function addVenue(){var c=cfg()||{};var vs=[...(c.venues||[]),{id:'v'+Date.now(),name:'New Venue',capacity:50}];DB.ref('/events/'+ACTIVE_EID+'/config/venues').set(vs).then(()=>{showSaved();renderConfig();});}
+function removeVenue(i){var c=cfg()||{};var vs=(c.venues||[]).filter((_,x)=>x!==i);if(!confirm('Remove this venue?'))return;DB.ref('/events/'+ACTIVE_EID+'/config/venues').set(vs).then(()=>{showSaved();renderConfig();});}
+function resetBk(){if(!confirm('Delete ALL bookings for this event? Cannot be undone.'))return;DB.ref('/events/'+ACTIVE_EID+'/bookings').remove().then(()=>{showSaved();alert('Bookings deleted.');navigate('dashboard');});}
+
+// ═══════════════════════════════════════════════════════════════════
+// VIDEO SHOOTS
+// ═══════════════════════════════════════════════════════════════════
+
+// ── Schedule logic ────────────────────────────────────────────────
+// Mon–Fri: 10:00–18:00 (4 slots: 10,12,14,16)
+// Sat: 12:00–18:00 (3 slots: 12,14,16)
+// Sun: closed
+// Slot duration: 2 hours
+
+var VS_DAY_SLOTS = {
+  1:['10:00','12:00','14:00','16:00'], // Mon
+  2:['10:00','12:00','14:00','16:00'], // Tue
+  3:['10:00','12:00','14:00','16:00'], // Wed
+  4:['10:00','12:00','14:00','16:00'], // Thu
+  5:['10:00','12:00','14:00','16:00'], // Fri
+  6:['12:00','14:00','16:00'],          // Sat
+  0:[]                                  // Sun closed
+};
+
+var VS_SLOT_LABEL = {
+  '10:00':'10:00 AM – 12:00 PM','12:00':'12:00 PM – 2:00 PM',
+  '14:00':'2:00 PM – 4:00 PM','16:00':'4:00 PM – 6:00 PM'
+};
+
+var VS_DAY_NAMES = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+var VS_DAY_FULL  = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+
+// Get next N days that have slots (starting today)
+function vsGetDays(n){
+  var days=[], d=new Date(); d.setHours(0,0,0,0);
+  while(days.length<n){
+    var dow=d.getDay();
+    if(VS_DAY_SLOTS[dow].length>0){
+      var y=d.getFullYear(),mo=d.getMonth()+1,dy=d.getDate();
+      days.push({
+        date: y+'-'+pad(mo)+'-'+pad(dy),
+        dow: dow,
+        label: VS_DAY_FULL[dow]+', '+dy+' '+['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][mo-1]+' '+y,
+        slots: VS_DAY_SLOTS[dow]
+      });
+    }
+    d.setDate(d.getDate()+1);
+  }
+  return days;
+}
+
+function vsGetBookings(date,slotKey){ return Object.values(CACHE.videoBookings).filter(b=>b.date===date&&b.slotKey===slotKey&&b.status!=='cancelled'); }
+function vsOurVideographerCount(date,slotKey){ return vsGetBookings(date,slotKey).filter(b=>b.needsVideographer).length; }
+function vsCanBookOurVideographer(date,slotKey){ return vsOurVideographerCount(date,slotKey)<1; }
+function vsCanBook(date,slotKey){ return vsGetBookings(date,slotKey).length<3; }
+
+// ── Render ────────────────────────────────────────────────────────
+function renderVideoShoots(){
+  var isCreative=CU.role==='art_director'||CU.role==='videographer';
+  var canBook=CU.role==='sales'||CU.role==='admin'||CU.role==='superadmin';
+  var days=vsGetDays(14);
+
+  var html=`<div class="page-header"><div class="ph-row">
+    <div><div class="page-title">🎬 Video Shoots</div>
+    <div class="page-sub">Agency video shoot bookings · 2-hour slots · Mon–Fri 10AM–6PM · Sat 12PM–6PM</div></div>
+  </div></div>
+
+  <div style="display:flex;gap:12px;margin-bottom:1rem;font-size:12px;flex-wrap:wrap">
+    <span>🟢 Available</span>
+    <span>🟡 Partial (1-2 booked)</span>
+    <span>🔴 Full (3/3 booked)</span>
+    <span>📹 Our videographer available</span>
+    <span>🎥 Our videographer taken</span>
+  </div>`;
+
+  days.forEach(function(day){
+    html+=`<div class="card" style="margin-bottom:1rem">
+      <div class="card-title" style="font-size:14px;color:var(--dgold)">📅 ${day.label}</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px">`;
+    day.slots.forEach(function(sk){
+      var bks=vsGetBookings(day.date,sk);
+      var total=bks.length, ourVid=vsOurVideographerCount(day.date,sk);
+      var isFull=total>=3, isPartial=total>0&&total<3;
+      var dot=isFull?'🔴':isPartial?'🟡':'🟢';
+      var vidDot=ourVid>=1?'🎥 Our videographer taken':'📹 Our videographer free';
+      html+=`<div style="border:1.5px solid ${isFull?'#fcc':isPartial?'#ffe082':'#c8e6c9'};border-radius:8px;padding:10px;background:${isFull?'#fff8f8':isPartial?'#fffde7':'#f1f8e9'}">
+        <div style="font-weight:600;font-size:13px;margin-bottom:4px">${VS_SLOT_LABEL[sk]||sk}</div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:6px">${dot} ${total}/3 booked · ${vidDot}</div>`;
+      var myBks=bks.filter(function(b){return b.bookedBy===CU.id;});
+      var otherBks=bks.filter(function(b){return b.bookedBy!==CU.id;});
+      // My bookings — always visible
+      myBks.forEach(function(b){
+        html+=`<div style="background:#e8f5e9;border:1px solid #b2dfdb;border-radius:5px;padding:5px 8px;margin:3px 0;font-size:11px;cursor:pointer" onclick="viewVsBooking('${b.id}')">
+          🏢 <b>${b.agencyName}</b>${b.needsVideographer?' 📹':''}<br>
+          <span style="color:var(--green);font-size:10px">Your booking</span>
+        </div>`;
+      });
+      if(CU.role==='sales'){
+        // Sales: show count of other bookings but no details
+        if(otherBks.length>0){
+          html+=`<div style="background:#f5f5f5;border:1px solid #e0e0e0;border-radius:5px;padding:5px 8px;margin:3px 0;font-size:11px;color:#999;text-align:center">${otherBks.length} other booking${otherBks.length>1?'s':''} in this slot</div>`;
+        }
+      } else {
+        // Admin / superadmin / art_director / videographer: see all bookings
+        otherBks.forEach(function(b){
+          html+=`<div style="background:#fff;border:1px solid #e0e0e0;border-radius:5px;padding:5px 8px;margin:3px 0;font-size:11px;cursor:pointer" onclick="viewVsBooking('${b.id}')">
+            🏢 <b>${b.agencyName}</b>${b.needsVideographer?' 📹':''}<br>
+            <span style="color:var(--muted)">${getUser(b.bookedBy)?getUser(b.bookedBy).name:'—'}</span>
+          </div>`;
+        });
+      }
+      if(!isFull&&canBook){
+        html+=`<button class="btn btn-gold btn-xs" style="width:100%;margin-top:6px" onclick="openVsBook('${day.date}','${sk}')">+ Book Slot</button>`;
+      }
+      html+=`</div>`;
+    });
+    html+=`</div></div>`;
+  });
+
+  document.getElementById('content').innerHTML=html;
+}
+
+// ── Book modal ────────────────────────────────────────────────────
+function openVsBook(date,slotKey){
+  var bks=vsGetBookings(date,slotKey);
+  if(bks.length>=3){alert('This slot is fully booked (3/3). Please choose another slot.');return;}
+  var canOurVid=vsCanBookOurVideographer(date,slotKey);
+  var dayObj=vsGetDays(14).find(function(d){return d.date===date;})||{label:date};
+
+  document.getElementById('modalTitle').textContent='📹 Book Video Shoot Slot';
+  document.getElementById('modalBody').innerHTML=`
+    <div class="alert alert-info">📅 ${dayObj.label} · ${VS_SLOT_LABEL[slotKey]||slotKey}</div>
+    <div class="alert alert-ok">${bks.length===0?'✅ Slot is empty — first booking':'🟡 '+(3-bks.length)+' space(s) remaining'} · Our videographer: ${canOurVid?'📹 Available':'🎥 Already booked'}</div>
+
+    <div style="font-weight:600;font-size:13px;color:var(--dgold);margin-bottom:8px;margin-top:4px">Agency Information</div>
+    <div class="fr2">
+      <div class="fg"><label class="req">Agency Name</label><input type="text" id="vs_agency" placeholder="Agency name"></div>
+      <div class="fg"><label class="req">Agency Owner Name</label><input type="text" id="vs_owner" placeholder="Full name"></div>
+    </div>
+    <div class="fr2">
+      ${phoneHTMLId('vs_owner_phone','Agency Owner Mobile (WhatsApp)')}
+      <div class="fg"><label class="req">Agency Official Email</label><input type="email" id="vs_email" placeholder="agency@example.com"></div>
+    </div>
+
+    <div style="font-weight:600;font-size:13px;color:var(--dgold);margin-bottom:8px;margin-top:8px">Agent Information</div>
+    <div class="fr2">
+      <div class="fg"><label class="req">Agent Name</label><input type="text" id="vs_agent" placeholder="Agent full name"></div>
+      ${phoneHTMLId('vs_agent_phone','Agent Mobile (WhatsApp)')}
+    </div>
+
+    <div style="font-weight:600;font-size:13px;color:var(--dgold);margin-bottom:8px;margin-top:8px">Production Requirements</div>
+    <div class="fg">
+      <label class="req">Videographer</label>
+      <select id="vs_vidneeded" onchange="onVsVidChange()">
+        <option value="ours"${canOurVid?'':' disabled'}>📹 Use Vincitore videographer${canOurVid?'':' (already booked for this slot)'}</option>
+        <option value="own">🎥 We have our own videographer</option>
+      </select>
+      ${!canOurVid?'<div class="hint" style="color:var(--orange)">⚠️ Vincitore videographer already booked for this slot — another agency has taken the slot. You can still book with your own videographer.</div>':''}
+    </div>
+    <div class="fg" id="vs_edit_wrap">
+      <label class="req">Editing</label>
+      <select id="vs_editneeded">
+        <option value="ours">✂️ Vincitore team will edit</option>
+        <option value="own">🎬 We will edit ourselves</option>
+      </select>
+    </div>
+    <div class="fg"><label>Notes</label><textarea id="vs_notes" placeholder="Any special requirements, concept, duration…"></textarea></div>`;
+
+  document.getElementById('modalFoot').innerHTML=`
+    <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+    <button class="btn btn-gold" onclick="submitVsBook('${date}','${slotKey}')">Confirm Booking</button>`;
+  document.getElementById('modal').style.display='flex';
+  onVsVidChange();
+}
+
+function onVsVidChange(){
+  var val=document.getElementById('vs_vidneeded');
+  if(!val)return;
+  var editWrap=document.getElementById('vs_edit_wrap');
+  if(editWrap){
+    if(val.value==='own'){
+      editWrap.style.opacity='.4';
+      editWrap.style.pointerEvents='none';
+      document.getElementById('vs_editneeded').value='own';
+    }else{
+      editWrap.style.opacity='1';
+      editWrap.style.pointerEvents='auto';
+    }
+  }
+}
+
+// Reusable phone HTML with custom IDs
+function phoneHTMLId(idBase, labelText){
+  return `<div class="fg">
+    <label class="req">${labelText}</label>
+    <div class="phone-wrap">
+      <span class="phone-cc">+</span>
+      <input type="text" id="${idBase}_cc" placeholder="971" maxlength="4"
+        style="width:64px;border:none;background:var(--egold);font-weight:600;color:var(--dgold);padding:9px 6px;outline:none;text-align:center"
+        oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+      <span style="padding:9px 4px;color:var(--border);font-size:18px;line-height:1;background:var(--egold)">-</span>
+      <input type="tel" id="${idBase}_num" placeholder="509082142" class="phone-num"
+        oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+    </div>
+    <div class="hint">Format: +[country code]-[number]</div>
+  </div>`;
+}
+
+function getPhoneById(idBase){
+  var cc=(document.getElementById(idBase+'_cc')||{}).value||'';
+  var num=(document.getElementById(idBase+'_num')||{}).value||'';
+  return cc&&num?'+'+cc+'-'+num:'';
+}
+
+function submitVsBook(date,slotKey){
+  var agency  = document.getElementById('vs_agency').value.trim();
+  var owner   = document.getElementById('vs_owner').value.trim();
+  var ownerPh = getPhoneById('vs_owner_phone');
+  var email   = document.getElementById('vs_email').value.trim();
+  var agent   = document.getElementById('vs_agent').value.trim();
+  var agentPh = getPhoneById('vs_agent_phone');
+  var needsVid= document.getElementById('vs_vidneeded').value==='ours';
+  var needsEdit= document.getElementById('vs_editneeded').value==='ours';
+  var notes   = document.getElementById('vs_notes').value.trim();
+
+  if(!agency||!owner||!ownerPh||!email||!agent||!agentPh){alert('Please fill all required fields.');return;}
+  if(vsGetBookings(date,slotKey).length>=3){alert('Slot just became full. Please choose another.');closeModal();renderVideoShoots();return;}
+  if(needsVid&&!vsCanBookOurVideographer(date,slotKey)){alert('Our videographer was just booked by another agency. Please select your own videographer or choose a different slot.');return;}
+
+  var id='vs'+Date.now()+Math.random().toString(36).substr(2,5);
+  var booking={
+    id, date, slotKey,
+    agencyName:agency, ownerName:owner, ownerPhone:ownerPh, agencyEmail:email,
+    agentName:agent, agentPhone:agentPh,
+    needsVideographer:needsVid, needsEditing:needsVid?needsEdit:false,
+    notes, bookedBy:CU.id, status:'confirmed',
+    createdAt:new Date().toISOString()
+  };
+
+  DB.ref('/video_bookings/'+id).set(booking).then(function(){
+    showSaved();
+    closeModal();
+    renderVideoShoots();
+  }).catch(function(e){alert('Error: '+e.message);});
+}
+
+// ── View booking ──────────────────────────────────────────────────
+function viewVsBooking(id){
+  var b=CACHE.videoBookings[id]; if(!b)return;
+  // Sales can only view their own bookings
+  if(CU.role==='sales'&&b.bookedBy!==CU.id){alert('You can only view your own video shoot bookings.');return;}
+  var rep=getUser(b.bookedBy);
+  var dayObj=vsGetDays(14).find(function(d){return d.date===b.date;})||{label:b.date};
+  var canCancel=CU.role==='superadmin'||CU.role==='admin';
+
+  document.getElementById('modalTitle').textContent='Video Shoot Details';
+  document.getElementById('modalBody').innerHTML=`
+    <div class="alert alert-info">📅 ${dayObj.label||b.date} · ${VS_SLOT_LABEL[b.slotKey]||b.slotKey}</div>
+    <div class="g2" style="margin-bottom:1rem">
+      <div><div style="font-size:10px;text-transform:uppercase;color:var(--muted);margin-bottom:3px">Status</div><span class="badge badge-${b.status}">${b.status}</span></div>
+      <div><div style="font-size:10px;text-transform:uppercase;color:var(--muted);margin-bottom:3px">Booked By</div><strong>${rep?rep.name:'—'}</strong></div>
+    </div>
+    <div style="font-weight:600;font-size:12px;color:var(--dgold);margin-bottom:6px">Agency</div>
+    <div class="g2" style="margin-bottom:1rem">
+      <div><div style="font-size:10px;text-transform:uppercase;color:var(--muted);margin-bottom:3px">Agency Name</div><strong style="font-size:15px">${b.agencyName}</strong></div>
+      <div><div style="font-size:10px;text-transform:uppercase;color:var(--muted);margin-bottom:3px">Owner</div>${b.ownerName}</div>
+      <div><div style="font-size:10px;text-transform:uppercase;color:var(--muted);margin-bottom:3px">Owner Phone</div><a href="https://wa.me/${b.ownerPhone.replace(/[^0-9]/g,'')}" style="color:var(--blue)">${b.ownerPhone} 💬</a></div>
+      <div><div style="font-size:10px;text-transform:uppercase;color:var(--muted);margin-bottom:3px">Email</div><a href="mailto:${b.agencyEmail}" style="color:var(--blue)">${b.agencyEmail}</a></div>
+    </div>
+    <div style="font-weight:600;font-size:12px;color:var(--dgold);margin-bottom:6px">Agent</div>
+    <div class="g2" style="margin-bottom:1rem">
+      <div><div style="font-size:10px;text-transform:uppercase;color:var(--muted);margin-bottom:3px">Agent Name</div><strong>${b.agentName}</strong></div>
+      <div><div style="font-size:10px;text-transform:uppercase;color:var(--muted);margin-bottom:3px">Agent Phone</div><a href="https://wa.me/${b.agentPhone.replace(/[^0-9]/g,'')}" style="color:var(--blue)">${b.agentPhone} 💬</a></div>
+    </div>
+    <div style="font-weight:600;font-size:12px;color:var(--dgold);margin-bottom:6px">Production</div>
+    <div class="g2" style="margin-bottom:1rem">
+      <div><div style="font-size:10px;text-transform:uppercase;color:var(--muted);margin-bottom:3px">Videographer</div><span style="font-weight:600;color:${b.needsVideographer?'var(--blue)':'var(--green)'}">${b.needsVideographer?'📹 Vincitore videographer':'🎥 Own videographer'}</span></div>
+      <div><div style="font-size:10px;text-transform:uppercase;color:var(--muted);margin-bottom:3px">Editing</div><span style="font-weight:600">${b.needsEditing?'✂️ Vincitore team':'🎬 Self-editing'}</span></div>
+    </div>
+    ${b.notes?`<div style="background:var(--lgold);padding:10px;border-radius:6px;font-size:13px;margin-bottom:1rem">${b.notes}</div>`:''}
+    <div style="border-top:1px solid var(--border);padding-top:10px;font-size:11px;color:var(--muted)">Booked: ${fmtDT(b.createdAt)}</div>`;
+
+  var foot=`<button class="btn btn-outline" onclick="closeModal()">Close</button>`;
+  if(canCancel&&b.status!=='cancelled') foot+=`<button class="btn btn-red btn-sm" onclick="cancelVsBook('${id}')">Cancel</button>`;
+  document.getElementById('modalFoot').innerHTML=foot;
+  document.getElementById('modal').style.display='flex';
+}
+
+function cancelVsBook(id){
+  if(!confirm('Cancel this video shoot booking?'))return;
+  DB.ref('/video_bookings/'+id+'/status').set('cancelled').then(function(){showSaved();closeModal();});
+}
+
+// ── Export ────────────────────────────────────────────────────────
+function exportCSV(){
+  if(!can('canExport')){alert('Access denied.');return;}
+  var rows=[['ID','Date','Slot','Venue','Agency','Owner','Phone','Attendees','Booked By','Status','Notes','Created At']];
+  allBk().forEach(b=>{
+    var v=getVenue(b.venueId),s=getSlots().find(x=>x.key===b.slotKey),rep=getUser(b.bookedBy);
+    rows.push([b.id,b.date,s?s.label:'',v?v.name:'',b.agencyName,b.ownerName,b.phone,b.attendees,rep?rep.name:'',b.status,b.notes||'',fmtDT(b.createdAt)]);
+  });
+  var csv=rows.map(r=>r.map(v=>'"'+(v+'').replace(/"/g,'""')+'"').join(',')).join('\n');
+  var a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
+  a.download='vincitore_bookings_'+new Date().toISOString().split('T')[0]+'.csv';
+  a.click();
+}
+</script></body></html>
