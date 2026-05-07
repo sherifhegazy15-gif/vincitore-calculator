@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SIP ROI Calculator — Vincitore Realty (Public)</title>
+<title>SIP ROI Calculator — Vincitore Realty</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f5f4f0;color:#1a1a1a;min-height:100vh;padding:2rem 1rem}
@@ -205,12 +205,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
       </div>
       <div class="inp-grp">
         <label>Unit Number</label>
-        <div class="inp-ctrl"><input type="text" id="unitNumber" placeholder="N/A" disabled style="opacity:.4;cursor:not-allowed;background:#f5f4f0" style="text-transform:uppercase" oninput="this.value=this.value.toUpperCase()"></div>
+        <div class="inp-ctrl"><input type="text" id="unitNumber" placeholder="N/A" disabled style="opacity:.4;cursor:not-allowed;background:#f5f4f0;pointer-events:none" style="text-transform:uppercase" oninput="this.value=this.value.toUpperCase()"></div>
         <div class="inp-note">Optional — for reference only</div>
       </div>
       <div class="inp-grp">
         <label>Unit Size</label>
-        <div class="inp-ctrl"><input type="number" id="unitSize" placeholder="N/A" disabled style="opacity:.4;cursor:not-allowed;background:#f5f4f0" min="1" max="99999" step="1"><span style="padding:10px 10px;background:#faf7f0;border-left:1px solid #e8e4d8;font-size:12px;font-weight:600;color:#8A6E25;flex-shrink:0">sqft</span></div>
+        <div class="inp-ctrl"><input type="number" id="unitSize" placeholder="N/A" disabled style="opacity:.4;cursor:not-allowed;background:#f5f4f0;pointer-events:none" min="1" max="99999" step="1"><span style="padding:10px 10px;background:#faf7f0;border-left:1px solid #e8e4d8;font-size:12px;font-weight:600;color:#8A6E25;flex-shrink:0">sqft</span></div>
         <div class="inp-note">Optional — for reference only</div>
       </div>
       <div class="inp-grp">
@@ -234,7 +234,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
       </div>
     </div>
     <div style="margin-top:1rem">
-      <label style="display:block;font-size:11px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px">Handover payment (20%)</label>
+      <label style="display:block;font-size:11px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px">Handover payment (40%)</label>
       <div class="tog-group" style="max-width:420px">
         <button class="tog"    id="togA" onclick="setScen('A')">Pay before handover</button>
         <button class="tog on" id="togB" onclick="setScen('B')">Pay at handover</button>
