@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SIP ROI Calculator — Vincitore Realty</title>
+<title>SIP ROI Calculator — Vincitore Realty (Public)</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f5f4f0;color:#1a1a1a;min-height:100vh;padding:2rem 1rem}
@@ -189,7 +189,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
   <!-- Details -->
   <div class="card">
     <div class="card-title">Investment details</div>
-    <div class="inp-grid-4">
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;align-items:start">
       <div class="inp-grp">
         <label>Project</label>
         <div class="inp-ctrl"><select id="propName" onchange="onProjectChange()">
@@ -202,6 +202,16 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
         <label>Unit type</label>
         <div class="inp-ctrl"><select id="unitType" onchange="onUnitChange()"></select></div>
         <div class="inp-note">Handover: <b id="hoDisplay">—</b></div>
+      </div>
+      <div class="inp-grp">
+        <label>Unit Number</label>
+        <div class="inp-ctrl"><input type="text" id="unitNumber" placeholder="N/A" disabled style="opacity:.4;cursor:not-allowed;background:#f5f4f0" style="text-transform:uppercase" oninput="this.value=this.value.toUpperCase()"></div>
+        <div class="inp-note">Optional — for reference only</div>
+      </div>
+      <div class="inp-grp">
+        <label>Unit Size</label>
+        <div class="inp-ctrl"><input type="number" id="unitSize" placeholder="N/A" disabled style="opacity:.4;cursor:not-allowed;background:#f5f4f0" min="1" max="99999" step="1"><span style="padding:10px 10px;background:#faf7f0;border-left:1px solid #e8e4d8;font-size:12px;font-weight:600;color:#8A6E25;flex-shrink:0">sqft</span></div>
+        <div class="inp-note">Optional — for reference only</div>
       </div>
       <div class="inp-grp">
         <label>Property value</label>
@@ -389,8 +399,10 @@ function onProjectChange(){
     if(sl){sl.min=prevDues[i-1];sl.max=dues[i-1];sl.value=dues[i-1];}
   }
   var sl5=document.getElementById('sl5');
-  var hoMo=getHOMonth();
-  if(sl5){sl5.min=dues[2];sl5.max=hoMo;sl5.value=hoMo;}
+  if(sl5){
+    var sl3v=parseInt((document.getElementById('sl3')||{}).value)||dues[2];
+    sl5.min=sl3v; sl5.max=hoMo; sl5.value=hoMo;
+  }
   onUnitChange();
 }
 
@@ -442,15 +454,21 @@ function updateDueDates(){
     document.getElementById('hodue').innerHTML='Paid at actual handover ('+getHO_DISPLAY_FULL()+') · <b>No ROI on this amount</b>';
   }
   var sl5=document.getElementById('sl5');
-  sl5.min=dues[2];sl5.max=hoMo;
+  // sl5 min = current value of sl3 (not the due date) so handover can match any early payment
+  var sl3val=parseInt(document.getElementById('sl3').value)||dues[2];
+  sl5.min=sl3val; sl5.max=hoMo;
   if(parseInt(sl5.value)>hoMo)sl5.value=hoMo;
-  if(parseInt(sl5.value)<dues[2])sl5.value=dues[2];
+  if(parseInt(sl5.value)<sl3val)sl5.value=sl3val;
 }
 
 function onSlide(idx){
-  for(var i=idx+1;i<=4;i++){
-    var sl=document.getElementById('sl'+i);if(!sl||sl.disabled)continue;
-    var newMin=Math.min(getM(i-1),parseInt(sl.max));sl.min=newMin;
+  // Slider chain: 1→2→3→5 (sl4 removed, handover is sl5)
+  var chain=[1,2,3,5];
+  var pos=chain.indexOf(idx);
+  for(var i=pos+1;i<chain.length;i++){
+    var sl=document.getElementById('sl'+chain[i]);if(!sl||sl.disabled)continue;
+    var newMin=Math.min(getM(chain[i-1]),parseInt(sl.max));
+    sl.min=newMin;
     if(parseInt(sl.value)<newMin)sl.value=newMin;
   }
   updateLabels();render();
@@ -461,7 +479,7 @@ function updateLabels(){
   // sliders: sl1=inst1, sl2=inst2, sl3=inst3, sl5=handover (sl4 removed)
   var sliderMap=[{id:1,dueIdx:0},{id:2,dueIdx:1},{id:3,dueIdx:2},{id:5,dueIdx:3}];
   sliderMap.forEach(function(s){
-    var sl=document.getElementById('sl'+s.id);if(!sl)return;
+    var sl=document.getElementById('sl'+s.id);if(!sl||sl.disabled)return; // skip disabled
     var m=parseInt(sl.value),due=dues[s.dueIdx]||hoMo,isEarly=m<due;
     var el=document.getElementById('mv'+s.id);if(!el)return;
     var dateLabel=(s.id===5&&m===hoMo)?getHO_DISPLAY_FULL():fmtDate(addMonths(dp,m));
@@ -479,7 +497,10 @@ function computePayouts(pv, scenA){
   var dpAmt=pv*.10;
   var instDues=getInstDues();
   var payMonths=[];
-  for(var i=1;i<=instCount;i++)payMonths.push(getM(i));
+  // Slider map: sl1=inst1, sl2=inst2, sl3=inst3, sl5=handover (sl4 was removed)
+  var sliderIds=[1,2,3,5];
+  var payMonths=[];
+  for(var i=0;i<instCount;i++) payMonths.push(getM(sliderIds[i]));
 
   // DP NEVER earns ROI — even if 100% upfront, base = 90% only (installments)
   // dpEarns flag still used to show the info note, but dpAmt is never added to base
@@ -689,6 +710,7 @@ function setScen(s, silent){
     sl5.max=hoMo;
     if(parseInt(sl5.value)>hoMo)sl5.value=hoMo;
     document.getElementById('hodue').innerHTML='Pay any time before handover · <b>'+getHO_DISPLAY_FULL()+'</b> · earns ROI from payment date';
+    updateLabels(); // force label refresh after enabling
   }else{
     sl5.disabled=true;row5.className='dis-row';
     document.getElementById('hodue').innerHTML='Paid at actual handover ('+getHO_DISPLAY_FULL()+') · <b id="due5">No ROI on this amount</b>';
@@ -708,6 +730,8 @@ function generatePDF(){
   var propName=document.getElementById('propName').value;
   var unitSel=document.getElementById('unitType');
   var unitLabel=unitSel.options[unitSel.selectedIndex].text.replace(/\s*—\s*AED[\d,]+$/,'').replace(/Custom.*$/,'Custom');
+  var unitNumber=document.getElementById('unitNumber').value.trim();
+  var unitSize=document.getElementById('unitSize').value.trim();
   var refNum='SIP-'+(dp.getMonth()+1<10?'0':'')+(dp.getMonth()+1)+dp.getFullYear()+'-'+Math.floor(Math.random()*9000+1000);
   var prepDate=fmtDateLong(new Date());
   var hoDisp=getHO_DISPLAY_FULL();
@@ -725,8 +749,9 @@ function generatePDF(){
   var schedRows='<tr class="dp-row"><td class="c">1</td><td>Down Payment</td>'
     +'<td>'+fmtDate(dp)+'</td><td class="r">'+fmt(downPmt)+'</td>'
     +'<td class="c">10%</td><td style="color:#888;font-style:italic">No ROI on Down Payment</td></tr>';
+  var pdfSliderIds=[1,2,3,5]; // sl4 was removed, handover is sl5
   for(var ii=0;ii<instCount;ii++){
-    var actualMo=getM(ii+1);
+    var actualMo=getM(pdfSliderIds[ii]);
     var actualDate=fmtDate(addMonths(dp,actualMo));
     var dueDate=fmtDate(addMonths(dp,instDues[ii]));
     var earlyNote=actualMo<instDues[ii]?' <span style="color:#d97706;font-size:7pt">(early · due '+dueDate+')</span>':'';
@@ -761,6 +786,8 @@ function generatePDF(){
     +'<div class="so-doc-title"><h2>Investment Offer</h2><p>Payment Schedule &amp; SIP Payout Projections</p></div></div>'
     +'<div class="so-meta">'
       +'<div class="so-meta-item"><div class="so-meta-lbl">Reference</div><div class="so-meta-val">'+refNum+'</div></div>'
+      +(unitNumber?'<div class="so-meta-item"><div class="so-meta-lbl">Unit Number</div><div class="so-meta-val" style="font-weight:700">'+unitNumber+'</div></div>':'')
+      +(unitSize?'<div class="so-meta-item"><div class="so-meta-lbl">Unit Size</div><div class="so-meta-val">'+parseInt(unitSize).toLocaleString()+' sqft</div></div>':'')
       +'<div class="so-meta-item"><div class="so-meta-lbl">Date prepared</div><div class="so-meta-val">'+prepDate+'</div></div>'
       +'<div class="so-meta-item"><div class="so-meta-lbl">SIP Payout Until Handover</div><div class="so-meta-val">'+hoDisp+'</div></div>'
     +'</div>'
@@ -769,6 +796,8 @@ function generatePDF(){
         +'<table>'
         +'<tr><td>Project</td><td>'+propName+'</td></tr>'
         +'<tr><td>Unit Type</td><td>'+unitLabel+'</td></tr>'
+        +(unitNumber?'<tr><td>Unit Number</td><td style="font-weight:700;color:var(--gold,#B8973A)">'+unitNumber+'</td></tr>':'')
+        +(unitSize?'<tr><td>Unit Size</td><td style="font-weight:700">'+parseInt(unitSize).toLocaleString()+' sqft</td></tr>':'')
         +'<tr><td>Developer</td><td>Vincitore Realty</td></tr>'
         +'<tr><td>Down Payment Date</td><td>'+fmtDate(dp)+'</td></tr>'
         +'<tr><td>First Payout Date</td><td style="color:#B8973A;font-weight:700">'+fmtDate(addMonths(dp,3))+'</td></tr>'
@@ -825,13 +854,17 @@ function generatePDF(){
 document.getElementById('propVal').addEventListener('input',render);
 document.getElementById('dpDate').addEventListener('change',function(){
   var dues=getInstDues();
-  var slMap=[{id:1,dueIdx:0},{id:2,dueIdx:1},{id:3,dueIdx:2},{id:5,dueIdx:3}];
-  slMap.forEach(function(s){
+  var hoMo=getHOMonth();
+  // Reset construction sliders to their due dates
+  [{id:1,dueIdx:0},{id:2,dueIdx:1},{id:3,dueIdx:2}].forEach(function(s){
     var sl=document.getElementById('sl'+s.id);if(!sl)return;
-    sl.max=dues[s.dueIdx]||hoMo;
-    sl.min=s.dueIdx===0?0:(dues[s.dueIdx-1]||0);
-    sl.value=dues[s.dueIdx]||hoMo;
+    sl.max=dues[s.dueIdx];
+    sl.min=s.dueIdx===0?0:dues[s.dueIdx-1];
+    sl.value=dues[s.dueIdx];
   });
+  // Reset sl5 — min is dues[2] since sl3 is reset to dues[2]
+  var sl5=document.getElementById('sl5');
+  if(sl5){sl5.min=dues[2];sl5.max=hoMo;sl5.value=hoMo;}
   render();
 });
 document.getElementById('propName').addEventListener('change',render);
