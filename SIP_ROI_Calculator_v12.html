@@ -46,8 +46,18 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .sl-table{width:100%;border-collapse:collapse}
 .sl-table th{font-size:10px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.05em;padding:0 8px 10px;text-align:left}
 .sl-table td{padding:9px 8px;border-top:1px solid #f0ece2;vertical-align:middle}
-.inst-name{font-weight:600;font-size:13px;color:#1a1a1a}
+.inst-name{font-weight:600;font-size:13px;color:#1a1a1a;display:flex;align-items:center;gap:4px;flex-wrap:wrap}
 .inst-due{font-size:11px;color:#aaa;margin-top:1px}
+.pct-inp{width:48px;padding:3px 5px;font-size:12px;font-weight:700;color:#8A6E25;background:#faf7f0;border:1px solid #D4B96A;border-radius:4px;text-align:center;-moz-appearance:textfield}
+.pct-inp::-webkit-outer-spin-button,.pct-inp::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.pct-inp:focus{outline:none;border-color:#B8973A;background:#fff;box-shadow:0 0 0 2px rgba(184,151,58,.15)}
+.pct-bar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;padding:9px 14px;background:#faf7f0;border:1px solid #e8d9a0;border-radius:8px;margin-bottom:14px;font-size:12px}
+.pct-bar.bad{background:#fef2f2;border-color:#fca5a5}
+.pct-sum-ok{color:#1E7E34;font-weight:700}
+.pct-sum-bad{color:#b91c1c;font-weight:700}
+.pct-reset-btn{padding:5px 10px;font-size:11px;font-weight:600;color:#8A6E25;background:#fff;border:1px solid #D4B96A;border-radius:5px;cursor:pointer;transition:all .15s}
+.pct-reset-btn:hover{background:#B8973A;color:#fff;border-color:#B8973A}
+.pct-error-banner{padding:14px 18px;background:#fef2f2;border:1px solid #fca5a5;border-radius:8px;margin:1rem 0;color:#991b1b;font-size:13px;font-weight:600;text-align:center}
 .inst-due b{color:#555;font-weight:600}
 .dp-row td{opacity:.5}
 .dis-row{opacity:.4}
@@ -205,22 +215,22 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
       </div>
       <div class="inp-grp">
         <label>Unit Number</label>
-        <div class="inp-ctrl"><input type="text" id="unitNumber" placeholder="N/A" disabled style="opacity:.4;cursor:not-allowed;background:#f5f4f0;pointer-events:none" style="text-transform:uppercase" oninput="this.value=this.value.toUpperCase()"></div>
+        <div class="inp-ctrl"><input type="text" id="unitNumber" placeholder="e.g. A-1204" style="text-transform:uppercase" oninput="this.value=this.value.toUpperCase()"></div>
         <div class="inp-note">Optional — for reference only</div>
       </div>
       <div class="inp-grp">
         <label>Unit Size</label>
-        <div class="inp-ctrl"><input type="number" id="unitSize" placeholder="N/A" disabled style="opacity:.4;cursor:not-allowed;background:#f5f4f0;pointer-events:none" min="1" max="99999" step="1"><span style="padding:10px 10px;background:#faf7f0;border-left:1px solid #e8e4d8;font-size:12px;font-weight:600;color:#8A6E25;flex-shrink:0">sqft</span></div>
+        <div class="inp-ctrl"><input type="number" id="unitSize" placeholder="e.g. 750" min="1" max="99999" step="1"><span style="padding:10px 10px;background:#faf7f0;border-left:1px solid #e8e4d8;font-size:12px;font-weight:600;color:#8A6E25;flex-shrink:0">sqft</span></div>
         <div class="inp-note">Optional — for reference only</div>
       </div>
       <div class="inp-grp">
         <label>Property value</label>
         <div class="inp-ctrl"><span class="pfx">AED</span><input type="number" id="propVal" placeholder="Enter value" min="100000" max="20000000" step="1000" oninput="render()"></div>
-        <div class="inp-note">Entry: <b id="entryAmt">—</b> (10% DP + 4% DLD)</div>
+        <div class="inp-note">Entry: <b id="entryAmt">—</b> (<span id="entryNote">10% DP + 4% DLD</span>)</div>
       </div>
       <div class="inp-grp">
         <label>DP Month</label>
-        <div class="inp-ctrl"><select id="dpDate"><option value="2026-05">May 2026</option></select></div>
+        <div class="inp-ctrl"><select id="dpDate"><option value="2026-06">June 2026</option></select></div>
         <div class="inp-note">First payout: <b id="firstPayoutDate">—</b></div>
       </div>
     </div>
@@ -234,7 +244,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
       </div>
     </div>
     <div style="margin-top:1rem">
-      <label style="display:block;font-size:11px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px">Handover payment (40%)</label>
+      <label style="display:block;font-size:11px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px">Handover payment (<span id="hoTogLbl">40</span>%)</label>
       <div class="tog-group" style="max-width:420px">
         <button class="tog"    id="togA" onclick="setScen('A')">Pay before handover</button>
         <button class="tog on" id="togB" onclick="setScen('B')">Pay at handover</button>
@@ -245,21 +255,27 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
   <!-- Timing -->
   <div class="card">
     <div class="card-title">Payment timing <span class="ctitle-note">— slide left to pay earlier and earn more ROI</span></div>
+    <div class="pct-bar" id="pctBar">
+      <div>Installment %: <span id="pctSumLbl" class="pct-sum-ok">Total 100% ✓</span> <span style="color:#888;margin-left:8px;font-weight:400">Edit values below — must total 100%</span></div>
+      <button type="button" class="pct-reset-btn" onclick="resetPct()">Reset to default (10/10/20/20/40)</button>
+    </div>
     <table class="sl-table">
       <thead><tr><th style="width:32%">Installment</th><th style="width:52%">Pay at month from DP</th><th style="text-align:right;width:16%">Selected</th></tr></thead>
       <tbody>
         <tr class="dp-row">
-          <td><div class="inst-name">Down payment (10%)</div><div class="inst-due">Month 0 · <b id="dpCalDate">—</b> · No ROI unless 100% upfront</div></td>
+          <td><div class="inst-name">Down payment (<input type="number" class="pct-inp" id="pdp" min="0" max="100" step="1" value="10" oninput="onPctChange()">%)</div><div class="inst-due">Month 0 · <b id="dpCalDate">—</b> · No ROI unless 100% upfront</div></td>
           <td><div class="sl-wrap"><input type="range" min="0" max="0" value="0" disabled></div></td>
           <td style="text-align:right"><span style="font-size:11px;color:#aaa">Month 0</span></td>
         </tr>
-        <tr><td><div class="inst-name">1st installment (10%)</div><div class="inst-due">Due: <span id="due1lbl">Month 1</span> · <b id="due1">—</b></div></td><td><div class="sl-wrap"><input type="range" id="sl1" min="0" max="1" value="1" step="1" oninput="onSlide(1)"></div></td><td><div class="mo-lbl due" id="mv1">—</div></td></tr>
-        <tr><td><div class="inst-name">2nd installment (20%)</div><div class="inst-due">Due: <span id="due2lbl">Month 6</span> · <b id="due2">—</b></div></td><td><div class="sl-wrap"><input type="range" id="sl2" min="1" max="6" value="6" step="1" oninput="onSlide(2)"></div></td><td><div class="mo-lbl due" id="mv2">—</div></td></tr>
-        <tr><td><div class="inst-name">3rd installment (20%)</div><div class="inst-due">Due: <span id="due3lbl">Month 12</span> · <b id="due3">—</b></div></td><td><div class="sl-wrap"><input type="range" id="sl3" min="6" max="12" value="12" step="1" oninput="onSlide(3)"></div></td><td><div class="mo-lbl due" id="mv3">—</div></td></tr>
-        <tr id="row5"><td><div class="inst-name">Handover payment (40%)</div><div class="inst-due" id="hodue">Pay any time before handover · <b id="due5">—</b> · earns ROI from payment date</div></td><td><div class="sl-wrap"><input type="range" id="sl5" min="10" max="37" value="37" step="1" oninput="onSlide(5)"></div></td><td><div class="mo-lbl due" id="mv5">—</div></td></tr>
+        <tr><td><div class="inst-name">1st installment (<input type="number" class="pct-inp" id="pi1" min="0" max="100" step="1" value="10" oninput="onPctChange()">%)</div><div class="inst-due">Due: <span id="due1lbl">Month 1</span> · <b id="due1">—</b></div></td><td><div class="sl-wrap"><input type="range" id="sl1" min="0" max="1" value="1" step="1" oninput="onSlide(1)"></div></td><td><div class="mo-lbl due" id="mv1">—</div></td></tr>
+        <tr><td><div class="inst-name">2nd installment (<input type="number" class="pct-inp" id="pi2" min="0" max="100" step="1" value="20" oninput="onPctChange()">%)</div><div class="inst-due">Due: <span id="due2lbl">Month 6</span> · <b id="due2">—</b></div></td><td><div class="sl-wrap"><input type="range" id="sl2" min="1" max="6" value="6" step="1" oninput="onSlide(2)"></div></td><td><div class="mo-lbl due" id="mv2">—</div></td></tr>
+        <tr><td><div class="inst-name">3rd installment (<input type="number" class="pct-inp" id="pi3" min="0" max="100" step="1" value="20" oninput="onPctChange()">%)</div><div class="inst-due">Due: <span id="due3lbl">Month 12</span> · <b id="due3">—</b></div></td><td><div class="sl-wrap"><input type="range" id="sl3" min="6" max="12" value="12" step="1" oninput="onSlide(3)"></div></td><td><div class="mo-lbl due" id="mv3">—</div></td></tr>
+        <tr id="row5"><td><div class="inst-name">Handover payment (<input type="number" class="pct-inp" id="pho" min="0" max="100" step="1" value="40" oninput="onPctChange()">%)</div><div class="inst-due" id="hodue">Pay any time before handover · <b id="due5">—</b> · earns ROI from payment date</div></td><td><div class="sl-wrap"><input type="range" id="sl5" min="10" max="37" value="37" step="1" oninput="onSlide(5)"></div></td><td><div class="mo-lbl due" id="mv5">—</div></td></tr>
       </tbody>
     </table>
   </div>
+
+  <div id="pctErrorBanner" class="pct-error-banner" style="display:none">⚠ Installment percentages must total 100%. Calculation paused — fix the values above to continue.</div>
 
   <div id="emptyState"><div class="empty-area">
     <svg width="48" height="48" viewBox="0 0 48 48" fill="none"><rect x="8" y="14" width="32" height="26" rx="3" stroke="#B8973A" stroke-width="1.5"/><path d="M16 14V10C16 9 16.9 8 18 8H30C31.1 8 32 9 32 10V14" stroke="#B8973A" stroke-width="1.5"/><line x1="18" y1="25" x2="30" y2="25" stroke="#B8973A" stroke-width="1.5" stroke-linecap="round"/></svg>
@@ -272,7 +288,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
       Export Investment Offer PDF
     </button></div>
 
-    <div id="dpNote" class="hi-box gold" style="display:none"><b>100% upfront payment — ROI calculated on 90%</b> — the down payment (10%) never earns ROI. ROI base = 90% of property value from Month 0.</div>
+    <div id="dpNote" class="hi-box gold" style="display:none"><b>100% upfront payment — ROI calculated on <span id="dpNotePct1">90</span>%</b> — the down payment (<span id="dpNotePct2">10</span>%) never earns ROI. ROI base = <span id="dpNotePct3">90</span>% of property value from Month 0.</div>
 
     <div style="margin-bottom:1.25rem;text-align:center">
       <div style="background:#fff;border-radius:12px;border:1px solid #e8e4d8;padding:1.75rem 2rem;display:inline-block;min-width:280px;box-shadow:0 1px 4px rgba(0,0,0,.06)">
@@ -421,6 +437,62 @@ var HO_FIXED = new Date(2029,6,1);   // kept for compatibility — overridden dy
 var HO_DISPLAY = 'Jun 2029';
 
 function fmt(n){return 'AED '+Math.round(n).toLocaleString();}
+
+// ── PERCENTAGE CONFIG (editable by sales) ─────────────────────────────────────
+var PCT_DEFAULTS={dp:10,i1:10,i2:20,i3:20,ho:40};
+var PCT={dp:10,i1:10,i2:20,i3:20,ho:40};
+function pctSum(){return PCT.dp+PCT.i1+PCT.i2+PCT.i3+PCT.ho;}
+function pctValid(){return pctSum()===100;}
+function readPctInputs(){
+  var ids=['pdp','pi1','pi2','pi3','pho'], keys=['dp','i1','i2','i3','ho'];
+  for(var i=0;i<ids.length;i++){
+    var el=document.getElementById(ids[i]);
+    var v=el?parseFloat(el.value):NaN;
+    PCT[keys[i]]=(isNaN(v)||v<0)?0:v;
+  }
+}
+function refreshPctLabels(){
+  // Handover toggle label
+  var hl=document.getElementById('hoTogLbl');if(hl)hl.textContent=PCT.ho;
+  // Entry note (DP% + 4% DLD)
+  var en=document.getElementById('entryNote');if(en)en.textContent=PCT.dp+'% DP + 4% DLD';
+  // dpNote (only relevant when 100% upfront)
+  var roiBase=100-PCT.dp;
+  var n1=document.getElementById('dpNotePct1');if(n1)n1.textContent=roiBase;
+  var n2=document.getElementById('dpNotePct2');if(n2)n2.textContent=PCT.dp;
+  var n3=document.getElementById('dpNotePct3');if(n3)n3.textContent=roiBase;
+}
+function updatePctBar(){
+  var sum=pctSum(), bar=document.getElementById('pctBar'), lbl=document.getElementById('pctSumLbl');
+  if(!bar||!lbl) return;
+  if(sum===100){
+    bar.className='pct-bar';
+    lbl.className='pct-sum-ok';
+    lbl.textContent='Total 100% ✓';
+  } else {
+    bar.className='pct-bar bad';
+    lbl.className='pct-sum-bad';
+    lbl.textContent='Total '+sum+'% — must equal 100%';
+  }
+}
+function onPctChange(){
+  readPctInputs();
+  refreshPctLabels();
+  updatePctBar();
+  render();
+}
+function resetPct(){
+  PCT={dp:PCT_DEFAULTS.dp,i1:PCT_DEFAULTS.i1,i2:PCT_DEFAULTS.i2,i3:PCT_DEFAULTS.i3,ho:PCT_DEFAULTS.ho};
+  document.getElementById('pdp').value=PCT.dp;
+  document.getElementById('pi1').value=PCT.i1;
+  document.getElementById('pi2').value=PCT.i2;
+  document.getElementById('pi3').value=PCT.i3;
+  document.getElementById('pho').value=PCT.ho;
+  refreshPctLabels();
+  updatePctBar();
+  render();
+}
+
 function getM(i){var el=document.getElementById('sl'+i);return el?parseInt(el.value):0;}
 function getDPDate(){var v=document.getElementById('dpDate').value,p=v.split('-');return new Date(parseInt(p[0]),parseInt(p[1])-1,1);}
 function addMonths(d,n){return new Date(d.getFullYear(),d.getMonth()+n,1);}
@@ -439,7 +511,7 @@ function updateDueDates(){
   var pvEl=document.getElementById('propVal');
   var pv=parseFloat(pvEl?pvEl.value:0)||0;
   var entBar=document.getElementById('entryAmtBar');
-  if(entBar) entBar.textContent=pv?fmt(pv*0.14):'—';
+  if(entBar) entBar.textContent=pv?fmt(pv*(PCT.dp+4)/100):'—';
   var fpBar=document.getElementById('firstPayoutBar');
   if(fpBar) fpBar.textContent=fmtDate(addMonths(dp,3));
   var ids=['due1','due2','due3'];
@@ -493,8 +565,8 @@ function updateLabels(){
 function computePayouts(pv, scenA){
   var dp=getDPDate(), hoMo=getHOMonth();
   var instCount=scenA?4:3;
-  var instAmts=[pv*.10,pv*.20,pv*.20,pv*.40];
-  var dpAmt=pv*.10;
+  var instAmts=[pv*PCT.i1/100, pv*PCT.i2/100, pv*PCT.i3/100, pv*PCT.ho/100];
+  var dpAmt=pv*PCT.dp/100;
   var instDues=getInstDues();
   var payMonths=[];
   // Slider map: sl1=inst1, sl2=inst2, sl3=inst3, sl5=handover (sl4 was removed)
@@ -622,6 +694,16 @@ function computePayouts(pv, scenA){
 function render(){
   var pv=parseFloat(document.getElementById('propVal').value);
   updateDueDates();updateLabels();
+  // Percentage sum validation — block calc if invalid
+  var errBanner=document.getElementById('pctErrorBanner');
+  if(!pctValid()){
+    if(errBanner) errBanner.style.display='block';
+    document.getElementById('resultsArea').style.display='none';
+    document.getElementById('emptyState').style.display='none';
+    document.getElementById('entryAmt').textContent='—';
+    return;
+  }
+  if(errBanner) errBanner.style.display='none';
   if(!pv||pv<=0){
     document.getElementById('resultsArea').style.display='none';
     document.getElementById('emptyState').style.display='block';
@@ -630,7 +712,7 @@ function render(){
   }
   document.getElementById('resultsArea').style.display='block';
   document.getElementById('emptyState').style.display='none';
-  document.getElementById('entryAmt').textContent=fmt(pv*.14);
+  document.getElementById('entryAmt').textContent=fmt(pv*(PCT.dp+4)/100);
 
   var scenA=(document.getElementById('togA').className.indexOf('on')>=0);
   var R=computePayouts(pv,scenA);
@@ -736,19 +818,20 @@ function generatePDF(){
   var prepDate=fmtDateLong(new Date());
   var hoDisp=getHO_DISPLAY_FULL();
   var dldAmt=Math.round(pv*0.04)+40;
-  var downPmt=Math.round(pv*0.10);
+  var downPmt=Math.round(pv*PCT.dp/100);
   var adminFee=2500;
   var oqoodFee=1060;
   var totalEntry=downPmt+dldAmt+adminFee+oqoodFee;
 
-  var instAmts=[pv*.10,pv*.20,pv*.20,pv*.40];
-  var instNames=['1st Installment (10%)','2nd Installment (20%)','3rd Installment (20%)','Handover Payment (40%)'];
+  var instAmts=[pv*PCT.i1/100, pv*PCT.i2/100, pv*PCT.i3/100, pv*PCT.ho/100];
+  var instPcts=[PCT.i1, PCT.i2, PCT.i3, PCT.ho];
+  var instNames=['1st Installment ('+PCT.i1+'%)','2nd Installment ('+PCT.i2+'%)','3rd Installment ('+PCT.i3+'%)','Handover Payment ('+PCT.ho+'%)'];
   var instDues=getInstDues();
   var instCount=scenA?4:3;
 
   var schedRows='<tr class="dp-row"><td class="c">1</td><td>Down Payment</td>'
     +'<td>'+fmtDate(dp)+'</td><td class="r">'+fmt(downPmt)+'</td>'
-    +'<td class="c">10%</td><td style="color:#888;font-style:italic">No ROI on Down Payment</td></tr>';
+    +'<td class="c">'+PCT.dp+'%</td><td style="color:#888;font-style:italic">No ROI on Down Payment</td></tr>';
   var pdfSliderIds=[1,2,3,5]; // sl4 was removed, handover is sl5
   for(var ii=0;ii<instCount;ii++){
     var actualMo=getM(pdfSliderIds[ii]);
@@ -759,13 +842,13 @@ function generatePDF(){
     schedRows+='<tr><td class="c">'+(ii+2)+'</td><td>'+instNames[ii]+earlyNote+'</td>'
       +'<td class="bold">'+actualDate+'</td>'
       +'<td class="r bold">'+fmt(instAmts[ii])+'</td>'
-      +'<td class="c">'+(ii===0?10:ii===3?40:20)+'%</td>'
+      +'<td class="c">'+instPcts[ii]+'%</td>'
       +'<td class="gold" style="font-size:7.5pt">'+roiNote+'</td></tr>';
   }
   if(!scenA){
-    schedRows+='<tr><td class="c">'+(instCount+2)+'</td><td>Handover Payment (40%)</td>'
-      +'<td>'+hoDisp+'</td><td class="r">'+fmt(pv*.40)+'</td>'
-      +'<td class="c">40%</td><td style="color:#888;font-size:7.5pt">No ROI (paid at handover)</td></tr>';
+    schedRows+='<tr><td class="c">'+(instCount+2)+'</td><td>Handover Payment ('+PCT.ho+'%)</td>'
+      +'<td>'+hoDisp+'</td><td class="r">'+fmt(pv*PCT.ho/100)+'</td>'
+      +'<td class="c">'+PCT.ho+'%</td><td style="color:#888;font-size:7.5pt">No ROI (paid at handover)</td></tr>';
   }
   schedRows+='<tr style="background:#f5f4f0"><td></td><td><b>TOTAL</b></td><td></td>'
     +'<td class="r bold" style="font-size:9pt">'+fmt(pv)+'</td><td class="c bold">100%</td><td></td></tr>';
@@ -808,7 +891,7 @@ function generatePDF(){
       +'<div class="so-box"><div class="so-box-title">Investment Summary</div>'
         +'<table>'
         +'<tr><td>Property Value</td><td>'+fmt(pv)+'</td></tr>'
-        +'<tr><td>Down Payment (10%)</td><td>'+fmt(downPmt)+'</td></tr>'
+        +'<tr><td>Down Payment ('+PCT.dp+'%)</td><td>'+fmt(downPmt)+'</td></tr>'
         +'<tr><td>DLD Fee (4%) + AED 40 (Processing charges)</td><td>'+fmt(dldAmt)+'</td></tr>'
         +'<tr><td>Admin Fee</td><td>AED 2,500</td></tr>'
         +'<tr><td>Oqood Registration Fee</td><td>AED 1,060</td></tr>'
@@ -826,7 +909,7 @@ function generatePDF(){
       +'<div class="so-return-box feat"><div class="so-return-lbl">Total ROI Earned</div><div class="so-return-val gold">'+fmt(R.totalROI)+'</div></div>'
     +'</div>'
     +'<div class="so-disclaimer">'
-      +'<b>* ROI from payment receipt (if paid before handover)</b> \u2014 the Handover Payment (40%) earns ROI from the date the payment is received, provided it is before the actual handover date of '+hoDisp+'. If paid at handover, this installment carries no ROI. The Down Payment (10%) does not earn ROI in any scenario.<br><br>'
+      +'<b>* ROI from payment receipt (if paid before handover)</b> \u2014 the Handover Payment ('+PCT.ho+'%) earns ROI from the date the payment is received, provided it is before the actual handover date of '+hoDisp+'. If paid at handover, this installment carries no ROI. The Down Payment ('+PCT.dp+'%) does not earn ROI in any scenario.<br><br>'
       +'<b>DISCLAIMER \u2014 ILLUSTRATIVE PURPOSES ONLY</b><br>'
       +'This document is prepared for illustrative and indicative purposes only. Figures are projections based on the stated payment schedule and ROI structure (8% net per annum, paid quarterly, starting 3 months from the booking date). Actual returns are subject to the terms of the official SPA. This document does not constitute a legally binding commitment or financial advice. The handover date of '+hoDisp+' is a target and subject to change. If handover is delayed, ROI payments continue until actual handover. Investors should review the official SPA and seek independent legal and financial counsel before making any investment decision.<br><br>'
       +'<b>Default in Payments:</b> In case of default in payments, the developer reserves the right to cancel all future ROI payments.'
@@ -835,7 +918,7 @@ function generatePDF(){
   +'<div class="so-page-2">'
     +'<div class="so-pg2-hdr"><div class="so-pg2-brand">VINCITORE REALTY \u2014 SECURED INVESTORS PROGRAMME</div><div>SIP Payout Schedule \u00b7 Ref: '+refNum+'</div></div>'
     +'<div class="so-section-title">SIP Quarterly Payout Schedule</div>'
-    +'<div style="font-size:7.5pt;color:#888;margin-bottom:8px">Payouts are quarterly from Month 3 of the booking date. A final payout is made at handover for any remaining partial quarter. ROI base excludes the Down Payment (10%) in all scenarios.</div>'
+    +'<div style="font-size:7.5pt;color:#888;margin-bottom:8px">Payouts are quarterly from Month 3 of the booking date. A final payout is made at handover for any remaining partial quarter. ROI base excludes the Down Payment ('+PCT.dp+'%) in all scenarios.</div>'
     +'<table class="so-tbl"><thead><tr><th class="c">#</th><th>Payout date</th><th>Period covered</th>'
       +'<th class="c">Duration</th><th class="r">Payout amount</th>'
     +'</tr></thead><tbody>'+qRows+'</tbody>'
@@ -870,6 +953,9 @@ document.getElementById('dpDate').addEventListener('change',function(){
 document.getElementById('propName').addEventListener('change',render);
 // Init cascading selects
 onProjectChange();
+readPctInputs();
+refreshPctLabels();
+updatePctBar();
 updateDueDates();updateLabels();
 setScen('B', true); // default to pay at handover — silent, no popup
 
