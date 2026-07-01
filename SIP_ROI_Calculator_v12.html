@@ -215,8 +215,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
       </div>
       <div class="inp-grp">
         <label>Unit Number</label>
-        <div class="inp-ctrl"><input type="text" id="unitNumber" placeholder="e.g. A-1204" style="text-transform:uppercase" oninput="this.value=this.value.toUpperCase()"></div>
-        <div class="inp-note">Optional — for reference only</div>
+        <div class="inp-ctrl"><input type="text" id="unitNumber" placeholder="—" readonly title="Unit Number is not editable in this version" style="background:#faf7f0;color:#8A6E25;cursor:not-allowed;text-transform:uppercase"></div>
+        <div class="inp-note">🔒 Locked — not editable</div>
       </div>
       <div class="inp-grp">
         <label>Unit Size</label>
@@ -230,7 +230,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
       </div>
       <div class="inp-grp">
         <label>DP Month</label>
-        <div class="inp-ctrl"><select id="dpDate"><option value="2026-06">June 2026</option></select></div>
+        <div class="inp-ctrl"><select id="dpDate"><option value="2026-07">July 2026</option></select></div>
         <div class="inp-note">First payout: <b id="firstPayoutDate">—</b></div>
       </div>
     </div>
