@@ -318,7 +318,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
       <div class="s-note" id="sNote"></div>
     </div>
   </div><!-- end resultsArea -->
-  <div class="footer"><b>Vincitore Realty</b> — SIP · 8% Net ROI p.a. · Payouts every 3 months from DP date · Internal Use Only</div>
+  <div class="footer"><b>Vincitore Realty</b> — SIP · 8% Net ROI p.a. · 3-year payout period · Payouts every 3 months from DP date · Internal Use Only</div>
 </div></div>
 
 <div id="salesOffer"></div>
@@ -501,11 +501,22 @@ function fmtDateLong(d){return d.toLocaleDateString('en-GB',{day:'2-digit',month
 function monthsBetween(a,b){return(b.getFullYear()-a.getFullYear())*12+(b.getMonth()-a.getMonth());}
 function getHOMonth(){return monthsBetween(getDPDate(),getHO_FIXED());}
 
+// ── 3-YEAR SIP PERIOD CAP ────────────────────────────────────────────────────
+// SIP payouts run for 3 years (36 months) from DP date, OR until handover,
+// whichever comes first. This prevents ROI accrual beyond the SIP term even
+// if the handover date is delayed.
+var SIP_TERM_MONTHS = 36;
+function getROIEndMonth(){return Math.min(getHOMonth(), SIP_TERM_MONTHS);}
+function getROIEndDate(){return addMonths(getDPDate(), getROIEndMonth());}
+function isROICappedAtTerm(){return getHOMonth() > SIP_TERM_MONTHS;}
+
 function updateDueDates(){
   var dp=getDPDate(), hoMo=getHOMonth(), dues=getInstDues();
   document.getElementById('dpCalDate').textContent=fmtDate(dp);
   document.getElementById('firstPayoutDate').textContent=fmtDate(addMonths(dp,3));
-  document.getElementById('roiWindow').textContent=fmtDate(addMonths(dp,1))+' – '+getHO_DISPLAY_FULL();
+  var roiEndDate=getROIEndDate();
+  var roiEndLabel=isROICappedAtTerm()?fmtDate(roiEndDate)+' (3-year SIP end)':getHO_DISPLAY_FULL();
+  document.getElementById('roiWindow').textContent=fmtDate(addMonths(dp,1))+' – '+roiEndLabel;
   document.getElementById('handoverDisplay').textContent=getHO_DISPLAY_FULL();
   // Update entry and first payout in bar
   var pvEl=document.getElementById('propVal');
@@ -564,6 +575,7 @@ function updateLabels(){
 // Builds the quarterly payout schedule with pro-rata first payout
 function computePayouts(pv, scenA){
   var dp=getDPDate(), hoMo=getHOMonth();
+  var roiEnd=Math.min(hoMo, SIP_TERM_MONTHS); // 3-year SIP term cap
   var instCount=scenA?4:3;
   var instAmts=[pv*PCT.i1/100, pv*PCT.i2/100, pv*PCT.i3/100, pv*PCT.ho/100];
   var dpAmt=pv*PCT.dp/100;
@@ -593,9 +605,9 @@ function computePayouts(pv, scenA){
     return b;
   }
 
-  // Generate payout dates: M3, M6, M9, ... last FULL quarter before or at hoMo
+  // Generate payout dates: M3, M6, M9, ... last FULL quarter before or at roiEnd
   var payoutDates=[];
-  for(var m=3;m<=hoMo;m+=3) payoutDates.push(m);
+  for(var m=3;m<=roiEnd;m+=3) payoutDates.push(m);
 
   var payouts=[];
   var prevDate=0; // period starts from M0
@@ -651,14 +663,14 @@ function computePayouts(pv, scenA){
     prevDate=pd;
   });
 
-  // ── FINAL PRO-RATED PAYOUT AT HANDOVER ──────────────────────────────────────
-  // If hoMo is not exactly divisible by 3, there are remaining months after
-  // the last full quarterly payout — pay these out pro-rated at handover
+  // ── FINAL PRO-RATED PAYOUT AT ROI END ───────────────────────────────────────
+  // If roiEnd is not exactly divisible by 3, pay a pro-rated final payout.
+  // roiEnd = handover for short-handover projects, or 36-month cap for delayed handovers.
   var lastFullQ = payoutDates.length>0 ? payoutDates[payoutDates.length-1] : 0;
-  var remainder = hoMo - lastFullQ;
+  var remainder = roiEnd - lastFullQ;
   if(remainder > 0){
     // Calculate ROI for the remainder period
-    var remEvents=timeline.filter(function(e){return e.month>lastFullQ && e.month<=hoMo;});
+    var remEvents=timeline.filter(function(e){return e.month>lastFullQ && e.month<=roiEnd;});
     var remROI=0;
     var remBase=baseAt(lastFullQ);
     var remFrom=lastFullQ;
@@ -667,18 +679,21 @@ function computePayouts(pv, scenA){
       if(remBase>0 && e.month>remFrom){remROI+=remBase*0.08*(e.month-remFrom)/12;}
       remBase=e.base;remFrom=e.month;
     });
-    if(remBase>0 && hoMo>remFrom){remROI+=remBase*0.08*(hoMo-remFrom)/12;}
+    if(remBase>0 && roiEnd>remFrom){remROI+=remBase*0.08*(roiEnd-remFrom)/12;}
 
     if(remROI>0){
+      // Label depends on whether we ended at handover or at the 36-month cap
+      var endAtHandover=(roiEnd===hoMo);
+      var endDate=endAtHandover?getHO_DISPLAY():fmtDate(addMonths(dp,roiEnd));
       payouts.push({
         num       : payouts.length+1,
-        payDate   : hoMo,
-        calDate   : getHO_DISPLAY(),
+        payDate   : roiEnd,
+        calDate   : endDate,
         periodFrom: lastFullQ,
-        periodTo  : hoMo,
+        periodTo  : roiEnd,
         calFrom   : fmtDate(addMonths(dp,lastFullQ)),
-        calTo     : getHO_DISPLAY(),
-        baseAtEnd : baseAt(hoMo)||remBase,
+        calTo     : endDate,
+        baseAtEnd : baseAt(roiEnd)||remBase,
         duration  : remainder,
         amount    : remROI,
         isProRata : true,
@@ -688,7 +703,7 @@ function computePayouts(pv, scenA){
   }
 
   var totalROI=payouts.reduce(function(s,p){return s+p.amount;},0);
-  return{payouts:payouts, totalROI:totalROI, dpEarns:dpEarns, hoMo:hoMo};
+  return{payouts:payouts, totalROI:totalROI, dpEarns:dpEarns, hoMo:hoMo, roiEnd:roiEnd};
 }
 
 function render(){
@@ -765,7 +780,8 @@ function render(){
     noteHtml+='<b>First payout is pro-rated</b> — the 1st installment was paid at Month '+getM(1)+', so ROI accrued for '+fp.duration+' month'+(fp.duration>1?'s':'')+' before the first quarterly payout.<br>';
   }
   if(finalP&&finalP.isFinal){
-    noteHtml+=(noteHtml?'<br>':'')+'<b>Final payout at handover ('+finalP.calDate+')</b> — pro-rated for '+finalP.duration+' month'+(finalP.duration>1?'s':'')+' after the last full quarterly payout. Amount: <b>'+fmt(finalP.amount)+'</b>.';
+    var endLabel=(R.roiEnd===R.hoMo)?'at handover ('+finalP.calDate+')':'at end of 3-year SIP period ('+finalP.calDate+')';
+    noteHtml+=(noteHtml?'<br>':'')+'<b>Final payout '+endLabel+'</b> — pro-rated for '+finalP.duration+' month'+(finalP.duration>1?'s':'')+' after the last full quarterly payout. Amount: <b>'+fmt(finalP.amount)+'</b>.';
   }
   if(noteHtml) document.getElementById('sNote').innerHTML=noteHtml;
   else document.getElementById('sNote').style.display='none';
@@ -838,7 +854,7 @@ function generatePDF(){
     var actualDate=fmtDate(addMonths(dp,actualMo));
     var dueDate=fmtDate(addMonths(dp,instDues[ii]));
     var earlyNote=actualMo<instDues[ii]?' <span style="color:#d97706;font-size:7pt">(early · due '+dueDate+')</span>':'';
-    var roiNote=ii===3?'* ROI from payment receipt (if paid before handover)':'ROI from payment receipt';
+    var roiNote=ii===3?'ROI from payment receipt (if paid before handover)':'ROI from payment receipt';
     schedRows+='<tr><td class="c">'+(ii+2)+'</td><td>'+instNames[ii]+earlyNote+'</td>'
       +'<td class="bold">'+actualDate+'</td>'
       +'<td class="r bold">'+fmt(instAmts[ii])+'</td>'
@@ -872,7 +888,7 @@ function generatePDF(){
       +(unitNumber?'<div class="so-meta-item"><div class="so-meta-lbl">Unit Number</div><div class="so-meta-val" style="font-weight:700">'+unitNumber+'</div></div>':'')
       +(unitSize?'<div class="so-meta-item"><div class="so-meta-lbl">Unit Size</div><div class="so-meta-val">'+parseInt(unitSize).toLocaleString()+' sqft</div></div>':'')
       +'<div class="so-meta-item"><div class="so-meta-lbl">Date prepared</div><div class="so-meta-val">'+prepDate+'</div></div>'
-      +'<div class="so-meta-item"><div class="so-meta-lbl">SIP Payout Until Handover</div><div class="so-meta-val">'+hoDisp+'</div></div>'
+      +'<div class="so-meta-item"><div class="so-meta-lbl">SIP Payout Period</div><div class="so-meta-val">3 years from DP</div></div>'
     +'</div>'
     +'<div class="so-two-col">'
       +'<div class="so-box"><div class="so-box-title">Property Details</div>'
@@ -909,16 +925,15 @@ function generatePDF(){
       +'<div class="so-return-box feat"><div class="so-return-lbl">Total ROI Earned</div><div class="so-return-val gold">'+fmt(R.totalROI)+'</div></div>'
     +'</div>'
     +'<div class="so-disclaimer">'
-      +'<b>* ROI from payment receipt (if paid before handover)</b> \u2014 the Handover Payment ('+PCT.ho+'%) earns ROI from the date the payment is received, provided it is before the actual handover date of '+hoDisp+'. If paid at handover, this installment carries no ROI. The Down Payment ('+PCT.dp+'%) does not earn ROI in any scenario.<br><br>'
       +'<b>DISCLAIMER \u2014 ILLUSTRATIVE PURPOSES ONLY</b><br>'
-      +'This document is prepared for illustrative and indicative purposes only. Figures are projections based on the stated payment schedule and ROI structure (8% net per annum, paid quarterly, starting 3 months from the booking date). Actual returns are subject to the terms of the official SPA. This document does not constitute a legally binding commitment or financial advice. The handover date of '+hoDisp+' is a target and subject to change. If handover is delayed, ROI payments continue until actual handover. Investors should review the official SPA and seek independent legal and financial counsel before making any investment decision.<br><br>'
+      +'This document is prepared for illustrative and indicative purposes only. Figures are projections based on the stated payment schedule and ROI structure (8% net per annum, paid quarterly, starting 3 months from the booking date). Actual returns are subject to the terms of the official SPA. This document does not constitute a legally binding commitment or financial advice. The handover date of '+hoDisp+' is a target and subject to change. <b>SIP payouts are for a period of 3 years (36 months) from the Down Payment date.</b> Investors should review the official SPA and seek independent legal and financial counsel before making any investment decision.<br><br>'
       +'<b>Default in Payments:</b> In case of default in payments, the developer reserves the right to cancel all future ROI payments.'
     +'</div>'
   +'</div>'
   +'<div class="so-page-2">'
     +'<div class="so-pg2-hdr"><div class="so-pg2-brand">VINCITORE REALTY \u2014 SECURED INVESTORS PROGRAMME</div><div>SIP Payout Schedule \u00b7 Ref: '+refNum+'</div></div>'
     +'<div class="so-section-title">SIP Quarterly Payout Schedule</div>'
-    +'<div style="font-size:7.5pt;color:#888;margin-bottom:8px">Payouts are quarterly from Month 3 of the booking date. A final payout is made at handover for any remaining partial quarter. ROI base excludes the Down Payment ('+PCT.dp+'%) in all scenarios.</div>'
+    +'<div style="font-size:7.5pt;color:#888;margin-bottom:8px">Payouts are quarterly from Month 3 of the booking date for a period of 3 years (36 months). A final pro-rated payout is made at the end of the SIP period for any remaining partial quarter. ROI base excludes the Down Payment ('+PCT.dp+'%) in all scenarios.</div>'
     +'<table class="so-tbl"><thead><tr><th class="c">#</th><th>Payout date</th><th>Period covered</th>'
       +'<th class="c">Duration</th><th class="r">Payout amount</th>'
     +'</tr></thead><tbody>'+qRows+'</tbody>'
