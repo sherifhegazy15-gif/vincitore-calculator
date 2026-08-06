@@ -215,8 +215,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
       </div>
       <div class="inp-grp">
         <label>Unit Number</label>
-        <div class="inp-ctrl"><input type="text" id="unitNumber" placeholder="—" readonly title="Unit Number is not editable in this version" style="background:#faf7f0;color:#8A6E25;cursor:not-allowed;text-transform:uppercase"></div>
-        <div class="inp-note">🔒 Locked — not editable</div>
+        <div class="inp-ctrl"><input type="text" id="unitNumber" placeholder="e.g. A-1204" style="text-transform:uppercase" oninput="this.value=this.value.toUpperCase()"></div>
+        <div class="inp-note">Optional — for reference only</div>
       </div>
       <div class="inp-grp">
         <label>Unit Size</label>
@@ -392,6 +392,7 @@ function getInstDues(){
 
 function onProjectChange(){
   var proj=getProjectData();
+  populateDPMonths(); // Regenerate DP months for this project's handover window
   var sel=document.getElementById('unitType');
   sel.innerHTML='';
   proj.units.forEach(function(u){
@@ -431,6 +432,45 @@ function onUnitChange(){
   pv.style.color=isCustom?'#1a1a1a':'#8A6E25';
   if(!isCustom) pv.value=price;
   render();
+}
+
+// ── DYNAMIC DP MONTH DROPDOWN ────────────────────────────────────────────────
+// Populates the DP Month dropdown based on the selected project's handover.
+// Range: current month → min(handover − 3 months, 24 months forward)
+// Preserves current selection if still valid, else defaults to first option.
+function populateDPMonths(){
+  var sel=document.getElementById('dpDate');
+  var prevVal=sel.value;
+  var proj=getProjectData();
+  var ho=proj.hoFixed;
+
+  // Start from fixed May 2026 baseline — allows backdating for existing bookings
+  var start=new Date(2026,4,1); // May 2026 (month index 4)
+
+  // End = min(handover − 3 months, start + 30 months) — keeps dropdown compact
+  var endByHo=new Date(ho.getFullYear(), ho.getMonth()-3, 1);
+  var endByCap=new Date(start.getFullYear(), start.getMonth()+30, 1);
+  var end=endByHo<endByCap?endByHo:endByCap;
+
+  var MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  var opts=[];
+  var d=new Date(start);
+  while(d<=end){
+    var y=d.getFullYear(), m=d.getMonth();
+    opts.push({val:y+'-'+(m+1<10?'0':'')+(m+1), label:MONTHS[m]+' '+y});
+    d.setMonth(d.getMonth()+1);
+  }
+
+  sel.innerHTML='';
+  opts.forEach(function(o){
+    var opt=document.createElement('option');
+    opt.value=o.val; opt.textContent=o.label;
+    sel.appendChild(opt);
+  });
+
+  // Preserve previous selection if still in the new list, otherwise pick first
+  if(prevVal && opts.some(function(o){return o.val===prevVal;})) sel.value=prevVal;
+  else if(opts.length>0) sel.value=opts[0].val;
 }
 
 var HO_FIXED = new Date(2029,6,1);   // kept for compatibility — overridden dynamically
