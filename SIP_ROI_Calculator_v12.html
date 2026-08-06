@@ -215,8 +215,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
       </div>
       <div class="inp-grp">
         <label>Unit Number</label>
-        <div class="inp-ctrl"><input type="text" id="unitNumber" placeholder="e.g. A-1204" style="text-transform:uppercase" oninput="this.value=this.value.toUpperCase()"></div>
-        <div class="inp-note">Optional — for reference only</div>
+        <div class="inp-ctrl"><input type="text" id="unitNumber" placeholder="—" readonly title="Unit Number is not editable in this version" style="background:#faf7f0;color:#8A6E25;cursor:not-allowed;text-transform:uppercase"></div>
+        <div class="inp-note">🔒 Locked — not editable</div>
       </div>
       <div class="inp-grp">
         <label>Unit Size</label>
@@ -263,7 +263,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
       <thead><tr><th style="width:32%">Installment</th><th style="width:52%">Pay at month from DP</th><th style="text-align:right;width:16%">Selected</th></tr></thead>
       <tbody>
         <tr class="dp-row">
-          <td><div class="inst-name">Down payment (<input type="number" class="pct-inp" id="pdp" min="0" max="100" step="1" value="10" oninput="onPctChange()">%)</div><div class="inst-due">Month 0 · <b id="dpCalDate">—</b> · No ROI unless 100% upfront</div></td>
+          <td><div class="inst-name">Down payment (<input type="number" class="pct-inp" id="pdp" min="0" max="100" step="1" value="10" readonly title="Down Payment percentage is fixed in this version" style="background:#eee;color:#666;cursor:not-allowed;border-color:#ccc">%)  <span style="font-size:10px;color:#B8973A">🔒</span></div><div class="inst-due">Month 0 · <b id="dpCalDate">—</b> · No ROI unless 100% upfront</div></td>
           <td><div class="sl-wrap"><input type="range" min="0" max="0" value="0" disabled></div></td>
           <td style="text-align:right"><span style="font-size:11px;color:#aaa">Month 0</span></td>
         </tr>
