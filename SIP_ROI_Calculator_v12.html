@@ -541,22 +541,20 @@ function fmtDateLong(d){return d.toLocaleDateString('en-GB',{day:'2-digit',month
 function monthsBetween(a,b){return(b.getFullYear()-a.getFullYear())*12+(b.getMonth()-a.getMonth());}
 function getHOMonth(){return monthsBetween(getDPDate(),getHO_FIXED());}
 
-// ── 3-YEAR SIP PERIOD CAP ────────────────────────────────────────────────────
-// SIP payouts run for 3 years (36 months) from DP date, OR until handover,
-// whichever comes first. This prevents ROI accrual beyond the SIP term even
-// if the handover date is delayed.
+// ── FIXED 3-YEAR SIP PERIOD ──────────────────────────────────────────────────
+// SIP payouts always run for 3 years (36 months) from the Down Payment date,
+// independent of the project's handover date. If handover is earlier than
+// 36 months, ROI still continues on paid installments through the full term.
 var SIP_TERM_MONTHS = 36;
-function getROIEndMonth(){return Math.min(getHOMonth(), SIP_TERM_MONTHS);}
+function getROIEndMonth(){return SIP_TERM_MONTHS;}
 function getROIEndDate(){return addMonths(getDPDate(), getROIEndMonth());}
-function isROICappedAtTerm(){return getHOMonth() > SIP_TERM_MONTHS;}
 
 function updateDueDates(){
   var dp=getDPDate(), hoMo=getHOMonth(), dues=getInstDues();
   document.getElementById('dpCalDate').textContent=fmtDate(dp);
   document.getElementById('firstPayoutDate').textContent=fmtDate(addMonths(dp,3));
   var roiEndDate=getROIEndDate();
-  var roiEndLabel=isROICappedAtTerm()?fmtDate(roiEndDate)+' (3-year SIP end)':getHO_DISPLAY_FULL();
-  document.getElementById('roiWindow').textContent=fmtDate(addMonths(dp,1))+' – '+roiEndLabel;
+  document.getElementById('roiWindow').textContent=fmtDate(addMonths(dp,1))+' – '+fmtDate(roiEndDate)+' (3-year SIP)';
   document.getElementById('handoverDisplay').textContent=getHO_DISPLAY_FULL();
   // Update entry and first payout in bar
   var pvEl=document.getElementById('propVal');
@@ -615,7 +613,7 @@ function updateLabels(){
 // Builds the quarterly payout schedule with pro-rata first payout
 function computePayouts(pv, scenA){
   var dp=getDPDate(), hoMo=getHOMonth();
-  var roiEnd=Math.min(hoMo, SIP_TERM_MONTHS); // 3-year SIP term cap
+  var roiEnd=SIP_TERM_MONTHS; // Always 36 months, independent of handover
   var instCount=scenA?4:3;
   var instAmts=[pv*PCT.i1/100, pv*PCT.i2/100, pv*PCT.i3/100, pv*PCT.ho/100];
   var dpAmt=pv*PCT.dp/100;
@@ -722,9 +720,8 @@ function computePayouts(pv, scenA){
     if(remBase>0 && roiEnd>remFrom){remROI+=remBase*0.08*(roiEnd-remFrom)/12;}
 
     if(remROI>0){
-      // Label depends on whether we ended at handover or at the 36-month cap
-      var endAtHandover=(roiEnd===hoMo);
-      var endDate=endAtHandover?getHO_DISPLAY():fmtDate(addMonths(dp,roiEnd));
+      // End date is always the 3-year SIP end (independent of handover)
+      var endDate=fmtDate(addMonths(dp,roiEnd));
       payouts.push({
         num       : payouts.length+1,
         payDate   : roiEnd,
@@ -820,8 +817,7 @@ function render(){
     noteHtml+='<b>First payout is pro-rated</b> — the 1st installment was paid at Month '+getM(1)+', so ROI accrued for '+fp.duration+' month'+(fp.duration>1?'s':'')+' before the first quarterly payout.<br>';
   }
   if(finalP&&finalP.isFinal){
-    var endLabel=(R.roiEnd===R.hoMo)?'at handover ('+finalP.calDate+')':'at end of 3-year SIP period ('+finalP.calDate+')';
-    noteHtml+=(noteHtml?'<br>':'')+'<b>Final payout '+endLabel+'</b> — pro-rated for '+finalP.duration+' month'+(finalP.duration>1?'s':'')+' after the last full quarterly payout. Amount: <b>'+fmt(finalP.amount)+'</b>.';
+    noteHtml+=(noteHtml?'<br>':'')+'<b>Final payout at end of 3-year SIP period ('+finalP.calDate+')</b> — pro-rated for '+finalP.duration+' month'+(finalP.duration>1?'s':'')+' after the last full quarterly payout. Amount: <b>'+fmt(finalP.amount)+'</b>.';
   }
   if(noteHtml) document.getElementById('sNote').innerHTML=noteHtml;
   else document.getElementById('sNote').style.display='none';
